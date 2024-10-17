@@ -1,6 +1,6 @@
-import type { MatchInfo } from "./Model";
+import type { MatchInfo, UserStats } from "./Model";
 
 export interface PostRecordRequest {
 	matchInfo: MatchInfo;
-	userStats: string; // stringified UserStats[]
+	userStats: UserStats[];
 }

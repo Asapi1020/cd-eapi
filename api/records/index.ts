@@ -2,6 +2,11 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { Client, MongoDB, RecordUsecase } from "../../src/database";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+	const userAgent = req.headers["user-agent"];
+	if (!userAgent || userAgent.split(",")[0] !== "UE3-KF") {
+		return res.status(401).json({ message: "Unauthorized" });
+	}
+
 	if (req.method === "POST") {
 		return await postRecords(req, res);
 	}

@@ -1,45 +1,46 @@
 export interface MatchInfo {
+	id?: string;
 	timeStamp: string;
 	mapName: string;
 	serverName: string;
 	serverIP: string;
 	isVictory: boolean;
 	defeatWave: number;
-	cheatMessages: string; // stringified string[]
-	mutators: string; // stringified string[]
+	cheatMessages: string[];
+	mutators: string[];
 	isSolo: boolean;
 	CDInfo: CDInfo;
 }
 
 export interface CDInfo {
 	spawnCycle: string;
-	maxMonsters: string;
-	cohortSize: string;
-	spawnPoll: string;
-	waveSizeFakes: string;
-	spawnMod: string;
-	trashHPFakes: string;
-	QPHPFakes: string;
-	FPHPFakes: string;
-	SCHPFakes: string;
+	maxMonsters: number;
+	cohortSize: number;
+	spawnPoll: number;
+	waveSizeFakes: number;
+	spawnMod: number;
+	trashHPFakes: number;
+	QPHPFakes: number;
+	FPHPFakes: number;
+	SCHPFakes: number;
 	ZTSpawnMode: string;
-	ZTSpawnSlowDown: string;
-	albinoAlphas: string;
-	albinoCrawlers: string;
-	albinoGorefasts: string;
-	disableRobots: string;
-	disableSpawners: string;
-	fleshpoundRageSpawns: string;
-	startWithFullAmmo: string;
-	startWithFullArmor: string;
-	startWithFullGrenade: string;
-	zedsTeleportCloser: string;
+	ZTSpawnSlowDown: number;
+	albinoAlphas: boolean;
+	albinoCrawlers: boolean;
+	albinoGorefasts: boolean;
+	disableRobots: boolean;
+	disableSpawners: boolean;
+	fleshpoundRageSpawns: boolean;
+	startWithFullAmmo: boolean;
+	startWithFullArmor: boolean;
+	startWithFullGrenade: boolean;
+	zedsTeleportCloser: boolean;
 }
 
 export interface UserStats {
 	playerName: string;
 	steamID: string;
-	perk: string;
+	perkClass: string;
 	playTime: number;
 	damageDealt: number;
 	damageTaken: number;
@@ -50,13 +51,25 @@ export interface UserStats {
 	shotsHit: number;
 	headShots: number;
 	deaths: number;
-	weaponDamages: string; // stringified WeaponDamage[]
-	zedKills: unknown;
+	weaponDamages: WeaponDamage[];
+	zedKills: ZedKillType[];
+	matchID?: string;
 }
 
 export interface WeaponDamage {
-	weaponName: string;
+	weaponDefClass: string;
 	damageAmount: number;
 	headShots: number;
 	largeZedKills: number;
+}
+
+export interface ZedKillType {
+	zedClass: string;
+	killCount: number;
+}
+
+export interface User {
+	id: string;
+	name: string;
+	steamID: string;
 }
