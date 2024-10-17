@@ -1,10 +1,10 @@
 import { createId as cuid } from "@paralleldrive/cuid2";
 import type { Collection, Db, MongoClient } from "mongodb";
-import type { MatchInfo, User, UserStats } from "./Model";
+import type { Record, User } from "./Model";
+import type { PostRecordRequest } from "./requests";
 
 export interface Table {
-	matchInfo: Collection<MatchInfo>;
-	userStats: Collection<UserStats>;
+	record: Collection<Record>;
 	user: Collection<User>;
 }
 
@@ -15,35 +15,19 @@ export class MongoDB {
 	public constructor(client: MongoClient) {
 		this.db = client.db(process.env.DB_NAME);
 		this.collection = {
-			matchInfo: this.db.collection("matchInfo"),
-			userStats: this.db.collection("userStats"),
+			record: this.db.collection("record"),
 			user: this.db.collection("user"),
 		};
 	}
 
-	/**
-	 * @param matchInfo
-	 * @returns matchID
-	 */
-	public async postMatchInfo(
-		matchInfo: MatchInfo,
-	): Promise<string | undefined> {
+	public async postRecord(request: PostRecordRequest) {
 		try {
-			const matchID = cuid();
-			const matchInfoWithID: MatchInfo = {
-				...matchInfo,
-				id: matchID,
+			const record: Record = {
+				...request,
+				id: cuid(),
 			};
-			await this.collection.matchInfo.insertOne(matchInfoWithID);
-			return matchID;
-		} catch (error) {
-			throw new Error(error);
-		}
-	}
 
-	public async postUserStats(userStats: UserStats[]) {
-		try {
-			await this.collection.userStats.insertMany(userStats);
+			await this.collection.record.insertOne(record);
 		} catch (error) {
 			throw new Error(error);
 		}

@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { Client, MongoDB, RecordUsecase } from "../../src/database";
+import { Client, MongoDB } from "../../src/database";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
 	const userAgent = req.headers["user-agent"];
@@ -23,7 +23,7 @@ const postRecords = async (
 	try {
 		const client = await Client.mongo();
 		const model = new MongoDB(client);
-		await RecordUsecase.post(model, body);
+		await model.postRecord(body);
 		return res.status(200).json({ message: "Successfully post record" });
 	} catch (error) {
 		console.error(error);

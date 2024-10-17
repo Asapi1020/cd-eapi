@@ -1,5 +1,4 @@
 export interface MatchInfo {
-	id?: string;
 	timeStamp: string;
 	mapName: string;
 	serverName: string;
@@ -53,7 +52,6 @@ export interface UserStats {
 	deaths: number;
 	weaponDamages: WeaponDamage[];
 	zedKills: ZedKillType[];
-	matchID?: string;
 }
 
 export interface WeaponDamage {
@@ -72,4 +70,10 @@ export interface User {
 	id: string;
 	name: string;
 	steamID: string;
+}
+
+export interface Record {
+	id: string;
+	matchInfo: MatchInfo;
+	userStats: UserStats[];
 }
