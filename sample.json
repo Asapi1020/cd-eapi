@@ -1,0 +1,35 @@
+{
+	"matchInfo": {
+		"timeStamp": "2024/10/17 - 06:38:37",
+		"mapName": "KF-SubSynth",
+		"isVictory": false,
+		"defeatWave": 0,
+		"cheatMessages": "[]",
+		"mutators": "[\"FriendlyHUD.FriendlyHUDMutator\",\"FriendlyHUD.FriendlyHUDCDCompatController\",\"CombinedCD2.xVotingHandler\"]",
+		"isSolo": true,
+		"CDInfo": {
+			"spawnCycle": "basic_light",
+			"maxMonsters": "60",
+			"cohortSize": "0",
+			"spawnPoll": "1.0000",
+			"waveSizeFakes": "1",
+			"spawnMod": "0.0000",
+			"trashHPFakes": "6",
+			"QPHPFakes": "6",
+			"FPHPFakes": "6",
+			"SCHPFakes": "6",
+			"ZTSpawnMode": "clockwork",
+			"ZTSpawnSlowDown": "1.5000",
+			"albinoAlphas": "False",
+			"albinoCrawlers": "False",
+			"albinoGorefasts": "False",
+			"disableRobots": "False",
+			"disableSpawners": "False",
+			"fleshpoundRageSpawns": "False",
+			"startWithFullAmmo": "False",
+			"startWithFullArmor": "False",
+			"startWithFullGrenade": "False",
+			"zedsTeleportCloser": "False"
+		}
+	}
+}
