@@ -21,6 +21,7 @@
 	},
 	"dependencies": {
 		"@paralleldrive/cuid2": "^2.2.2",
-		"mongodb": "^6.9.0"
+		"mongodb": "^6.9.0",
+		"steam-server-query": "^1.1.3"
 	}
 }
