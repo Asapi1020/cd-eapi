@@ -20,16 +20,16 @@ export class MongoDB {
 		};
 	}
 
-	public async postRecord(request: PostRecordRequest) {
-		try {
-			const record: Record = {
-				...request,
-				id: cuid(),
-			};
+	public async getRecords(): Promise<Record[]> {
+		return await this.collection.record.find().toArray();
+	}
 
-			await this.collection.record.insertOne(record);
-		} catch (error) {
-			throw new Error(error);
-		}
+	public async postRecord(request: PostRecordRequest): Promise<void> {
+		const record: Record = {
+			...request,
+			id: cuid(),
+		};
+
+		await this.collection.record.insertOne(record);
 	}
 }
