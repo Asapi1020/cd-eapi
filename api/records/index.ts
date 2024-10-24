@@ -20,11 +20,15 @@ const getRecords = async (
 	req: VercelRequest,
 	res: VercelResponse,
 ): Promise<VercelResponse> => {
-	//const { page } = req.query;
+	const { page } = req.query;
+	console.log({ page });
+	const pageNum =
+		typeof page !== "string" || !page ? 1 : Math.max(Number.parseInt(page), 1);
+	console.log(pageNum);
 	try {
 		const client = await Client.mongo();
 		const model = new MongoDB(client);
-		const records = await model.getRecords();
+		const records = await model.getRecords(pageNum);
 		return res.status(200).json({ data: records });
 	} catch (error) {
 		console.error(error);

@@ -4,6 +4,8 @@ import { SteamAPIClient } from "../../apiClient/SteamAPIClient";
 import type { Record, User } from "./Model";
 import type { PostRecordRequest } from "./requests";
 
+const PER_PAGE = 20;
+
 export interface Table {
 	record: Collection<Record>;
 	user: Collection<User>;
@@ -23,8 +25,13 @@ export class MongoDB {
 		this.steamAPIClient = new SteamAPIClient();
 	}
 
-	public async getRecords(): Promise<Record[]> {
-		return await this.collection.record.find().toArray();
+	public async getRecords(page: number): Promise<Record[]> {
+		const skip = (page - 1) * PER_PAGE;
+		return await this.collection.record
+			.find()
+			.skip(skip)
+			.limit(PER_PAGE)
+			.toArray();
 	}
 
 	public async postRecord(request: PostRecordRequest): Promise<void> {
