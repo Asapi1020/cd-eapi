@@ -1,5 +1,6 @@
 import { createId as cuid } from "@paralleldrive/cuid2";
 import type { Collection, Db, MongoClient } from "mongodb";
+import { SteamAPIClient } from "../../apiClient/SteamAPIClient";
 import type { Record, User } from "./Model";
 import type { PostRecordRequest } from "./requests";
 
@@ -11,6 +12,7 @@ export interface Table {
 export class MongoDB {
 	private db: Db;
 	private collection: Table;
+	private steamAPIClient: SteamAPIClient;
 
 	public constructor(client: MongoClient) {
 		this.db = client.db(process.env.DB_NAME);
@@ -18,6 +20,7 @@ export class MongoDB {
 			record: this.db.collection("record"),
 			user: this.db.collection("user"),
 		};
+		this.steamAPIClient = new SteamAPIClient();
 	}
 
 	public async getRecords(): Promise<Record[]> {
@@ -25,10 +28,22 @@ export class MongoDB {
 	}
 
 	public async postRecord(request: PostRecordRequest): Promise<void> {
+		// fetch server info but it seems that only servers with 7777 GamePort are visible
+		const serverInfo = await this.steamAPIClient.getServerInfo(
+			request.matchInfo.serverIP.split(":")[0],
+		);
+		if (serverInfo.name) {
+			request.matchInfo.serverName = serverInfo.name;
+		}
+
+		// fetch players???
+
 		const record: Record = {
 			...request,
 			id: cuid(),
 		};
+
+		console.log(record);
 
 		await this.collection.record.insertOne(record);
 	}

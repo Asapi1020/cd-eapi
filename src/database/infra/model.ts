@@ -1,7 +1,7 @@
 export interface MatchInfo {
 	timeStamp: string;
 	mapName: string;
-	serverName: string;
+	serverName?: string;
 	serverIP: string;
 	isVictory: boolean;
 	defeatWave: number;
@@ -37,7 +37,7 @@ export interface CDInfo {
 }
 
 export interface UserStats {
-	playerName: string;
+	playerName?: string;
 	steamID: string;
 	perkClass: string;
 	playTime: number;

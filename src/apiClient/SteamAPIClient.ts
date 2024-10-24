@@ -1,3 +1,5 @@
+import { GameDig, type QueryResult } from "gamedig";
+
 export class SteamAPIClient {
 	private key: string;
 
@@ -9,14 +11,21 @@ export class SteamAPIClient {
 		this.key = process.env.STEAM_API_KEY;
 	}
 
-	public async getServerInfo(address: string) {
-		console.log({ address, key: this.key });
+	public async getServerInfo(ip: string): Promise<QueryResult> {
+		const serverInfo = await GameDig.query({
+			type: "killingfloor2",
+			host: ip,
+		});
+		return serverInfo;
+	}
+
+	public async getPlayerSummaries(ids: string[]) {
 		const response = await fetch(
-			`http://api.steampowered.com/ISteamApps/GetServersAtAddress/v0001?addr=${address}&key=${this.key})`,
+			`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${this.key}&steamids=${ids.join(",")}`,
 		);
 
 		if (!response.ok) {
-			throw new Error("Response is not ok");
+			throw new Error("Failed to fetch player summaries");
 		}
 
 		const data = await response.json();

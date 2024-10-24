@@ -37,7 +37,6 @@ const postRecords = async (
 	res: VercelResponse,
 ): Promise<VercelResponse> => {
 	const { body } = req;
-	console.log(body);
 
 	try {
 		const client = await Client.mongo();

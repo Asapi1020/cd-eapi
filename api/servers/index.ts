@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { SteamAPIClient } from "../../../src/apiClient";
+import { SteamAPIClient } from "../../src/apiClient/SteamAPIClient";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
 	if (req.method === "GET") {
@@ -21,10 +21,9 @@ const getServer = async (
 				.json({ error: { message: "Invalid server ip", ip } });
 		}
 
-		console.log({ ip });
 		const steamAPIClient = new SteamAPIClient();
 		const serverInfo = await steamAPIClient.getServerInfo(ip);
-		return res.status(200).json(serverInfo);
+		return res.status(200).json({ serverInfo });
 	} catch (error) {
 		return res.status(500).json(error);
 	}
