@@ -74,6 +74,14 @@ export interface User {
 
 export interface Record {
 	id: string;
+	version?: string;
 	matchInfo: MatchInfo;
 	userStats: UserStats[];
+}
+
+export interface SteamUser {
+	id: string;
+	name: string;
+	url: string;
+	avatarHash: string;
 }

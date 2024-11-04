@@ -1,4 +1,5 @@
 import { GameDig, type QueryResult } from "gamedig";
+import type { SteamUser } from "../database";
 
 export class SteamAPIClient {
 	private key: string;
@@ -19,7 +20,11 @@ export class SteamAPIClient {
 		return serverInfo;
 	}
 
-	public async getPlayerSummaries(ids: string[]) {
+	/**
+	 * @param ids Steam64 ID
+	 * @returns SteamUser Array
+	 */
+	public async getPlayerSummaries(ids: string[]): Promise<SteamUser[]> {
 		const response = await fetch(
 			`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${this.key}&steamids=${ids.join(",")}`,
 		);
@@ -29,6 +34,14 @@ export class SteamAPIClient {
 		}
 
 		const data = await response.json();
-		return data;
+		const players: SteamUser[] = data.response.players.map((player) => {
+			return {
+				id: player.steamid,
+				name: player.personaname,
+				url: player.profileurl,
+				avatarHash: player.avatarhash,
+			};
+		});
+		return players;
 	}
 }

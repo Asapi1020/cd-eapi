@@ -1,10 +1,10 @@
 import { createId as cuid } from "@paralleldrive/cuid2";
 import type { Collection, Db, MongoClient } from "mongodb";
 import { SteamAPIClient } from "../../apiClient/SteamAPIClient";
-import type { Record, User } from "./Model";
+import type { Record, User } from "./model";
 import type { PostRecordRequest } from "./requests";
 
-const PER_PAGE = 20;
+const VERSION = "1.0.0";
 
 export interface Table {
 	record: Collection<Record>;
@@ -25,29 +25,45 @@ export class MongoDB {
 		this.steamAPIClient = new SteamAPIClient();
 	}
 
-	public async getRecords(page: number): Promise<Record[]> {
-		const skip = (page - 1) * PER_PAGE;
-		return await this.collection.record
-			.find()
-			.skip(skip)
-			.limit(PER_PAGE)
-			.toArray();
+	public async getRecords(): Promise<Record[]> {
+		return await this.collection.record.find().toArray();
 	}
 
 	public async postRecord(request: PostRecordRequest): Promise<void> {
-		// fetch server info but it seems that only servers with 7777 GamePort are visible
-		const serverInfo = await this.steamAPIClient.getServerInfo(
-			request.matchInfo.serverIP.split(":")[0],
-		);
-		if (serverInfo.name) {
-			request.matchInfo.serverName = serverInfo.name;
+		try {
+			// fetch server info but it seems that only servers with 7777 GamePort are visible
+			const serverInfo = await this.steamAPIClient.getServerInfo(
+				request.matchInfo.serverIP.split(":")[0],
+			);
+			if (serverInfo.name) {
+				request.matchInfo.serverName = serverInfo.name;
+			}
+		} catch (error) {
+			console.error("Server Info Error", error);
 		}
 
-		// fetch players???
+		try {
+			const ids = request.userStats.map((userStat) => {
+				return userStat.steamID;
+			});
+			const players = await this.steamAPIClient.getPlayerSummaries(ids);
+			const playerMap = new Map(
+				players.map((player) => [player.id, player.name]),
+			);
+			for (const stat of request.userStats) {
+				const playerName = playerMap.get(stat.steamID);
+				if (playerName) {
+					stat.playerName = playerName;
+				}
+			}
+		} catch (error) {
+			console.error("Player Info Error", error);
+		}
 
 		const record: Record = {
 			...request,
 			id: cuid(),
+			version: VERSION,
 		};
 
 		console.log(record);

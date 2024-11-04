@@ -13,11 +13,9 @@ const getPlayers = async (req: VercelRequest, res: VercelResponse) => {
 	try {
 		const { id } = req.query;
 		const ids = typeof id === "string" ? [id] : id;
-		console.log(ids);
+
 		const steamAPIClient = new SteamAPIClient();
-		const data = await steamAPIClient.getPlayerSummaries([
-			"STEAM_0:1:485188694",
-		]);
+		const data = await steamAPIClient.getPlayerSummaries(ids);
 		return res.status(200).json(data);
 	} catch (error) {
 		return res.status(500).json(error);
