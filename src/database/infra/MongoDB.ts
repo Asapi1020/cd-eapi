@@ -26,7 +26,7 @@ export class MongoDB {
 	}
 
 	public async getRecords(): Promise<Record[]> {
-		return await this.collection.record.find().toArray();
+		return await this.collection.record.find({ version: VERSION }).toArray();
 	}
 
 	public async postRecord(request: PostRecordRequest): Promise<void> {
@@ -44,7 +44,9 @@ export class MongoDB {
 
 		try {
 			const ids = request.userStats.map((userStat) => {
-				return userStat.steamID;
+				const steam32ID = Number.parseInt(userStat.steamID);
+				const steam64ID = steam32ID + 76561197960265728;
+				return steam64ID.toString();
 			});
 			const players = await this.steamAPIClient.getPlayerSummaries(ids);
 			const playerMap = new Map(
