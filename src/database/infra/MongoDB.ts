@@ -4,7 +4,7 @@ import { SteamAPIClient } from "../../apiClient/SteamAPIClient";
 import type { Record, User } from "./model";
 import type { PostRecordRequest } from "./requests";
 
-const VERSION = "1.0.0";
+const VERSION = "1.0.1";
 
 export interface Table {
 	record: Collection<Record>;
@@ -43,11 +43,15 @@ export class MongoDB {
 		}
 
 		try {
-			const ids = request.userStats.map((userStat) => {
-				const steam32ID = Number.parseInt(userStat.steamID);
+			// change steamID from 32 to 64
+			const ids: string[] = [];
+			for (const stat of request.userStats) {
+				const steam32ID = Number.parseInt(stat.steamID);
 				const steam64ID = steam32ID + 76561197960265728;
-				return steam64ID.toString();
-			});
+				stat.steamID = steam64ID.toString();
+				ids.push(stat.steamID);
+			}
+
 			const players = await this.steamAPIClient.getPlayerSummaries(ids);
 			const playerMap = new Map(
 				players.map((player) => [player.id, player.name]),
