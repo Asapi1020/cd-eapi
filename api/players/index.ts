@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { SteamAPIClient } from "../../src/apiClient/SteamAPIClient";
+import { SteamAPIClient } from "../../src/framework";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
 	if (req.method === "GET") {

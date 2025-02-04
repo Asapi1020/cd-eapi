@@ -1,6 +1,8 @@
 import { createId as cuid } from "@paralleldrive/cuid2";
-import type { PostRecordRequest, Record } from "../domain";
+import type { CDInfo, PostRecordRequest, Record } from "../domain";
+import type { DiscordWebhookPayload } from "../domain/discord";
 import { Client, SteamAPIClient } from "../framework";
+import { sendDiscordWebhook } from "../framework/discordWebhookClient";
 import { MongoDB, VERSION } from "../infra";
 
 export async function postRecord(request: PostRecordRequest): Promise<void> {
@@ -8,6 +10,10 @@ export async function postRecord(request: PostRecordRequest): Promise<void> {
 	const client = await Client.mongo();
 	const db = new MongoDB(client);
 	await db.postRecord(record);
+
+	if (record.matchInfo.isVictory) {
+		notifyRecordToDiscord(record);
+	}
 }
 
 export async function postRequestToRecord(
@@ -57,4 +63,42 @@ export async function postRequestToRecord(
 	};
 
 	return record;
+}
+
+export async function notifyRecordToDiscord(record: Record): Promise<void> {
+	const webhookURL = process.env.DISCORD_WEBHOOK_URL;
+	if (!webhookURL) {
+		console.error("Discord Webhook URL is not defined");
+		return;
+	}
+
+	const payload: DiscordWebhookPayload = {
+		embeds: [
+			{
+				author: {
+					name: record.matchInfo.isSolo
+						? "Solo"
+						: (record.matchInfo.serverName ?? record.matchInfo.serverIP),
+				},
+				title: record.matchInfo.mapName,
+				description: getBasicCDInfo(record.matchInfo.CDInfo),
+				fields: {
+					name: `Players (${record.userStats.length}/6)`,
+					value: record.userStats
+						.map((stat) => stat.playerName ?? stat.steamID)
+						.join("\n"),
+				},
+			},
+		],
+	};
+
+	try {
+		await sendDiscordWebhook(webhookURL, payload);
+	} catch (error) {
+		console.error("Failed to send Discord Webhook", error);
+	}
+}
+
+export function getBasicCDInfo(info: CDInfo): string {
+	return `SpawnCycle=${info.spawnCycle}\nMaxMonsters=${info.maxMonsters}\nCohortSize=${info.cohortSize}\nWaveSizeFakes=${info.waveSizeFakes}\nSpawnPoll=${info.spawnPoll}`;
 }
