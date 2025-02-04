@@ -1,5 +1,5 @@
 import { GameDig, type QueryResult } from "gamedig";
-import type { SteamUser } from "../database";
+import type { SteamUser } from "../domain/model";
 
 export class SteamAPIClient {
 	private key: string;

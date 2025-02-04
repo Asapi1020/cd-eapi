@@ -1,5 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { Client, MongoDB } from "../../src/database";
+import { Client } from "../../src/framework";
+import { MongoDB } from "../../src/infra";
+import { postRecord } from "../../src/usecase";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
 	if (req.method === "GET") {
@@ -38,9 +40,7 @@ const postRecords = async (
 	const { body } = req;
 
 	try {
-		const client = await Client.mongo();
-		const model = new MongoDB(client);
-		await model.postRecord(body);
+		await postRecord(body);
 		return res.status(200).json({ message: "Successfully post record" });
 	} catch (error) {
 		console.error(error);
