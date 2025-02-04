@@ -12,7 +12,7 @@ export async function postRecord(request: PostRecordRequest): Promise<void> {
 	await db.postRecord(record);
 
 	if (record.matchInfo.isVictory) {
-		notifyRecordToDiscord(record);
+		await notifyRecordToDiscord(record);
 	}
 }
 
