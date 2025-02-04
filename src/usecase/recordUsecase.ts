@@ -41,13 +41,9 @@ export async function postRequestToRecord(
 		// change steamID from 32 to 64
 		const ids: string[] = [];
 		for (const stat of request.userStats) {
-			console.log(stat.steamID);
 			const steam32ID = BigInt(Number.parseInt(stat.steamID));
-			console.log(steam32ID);
 			const steam64ID = steam32ID + BigInt(76561197960265728);
-			console.log(steam64ID);
 			stat.steamID = steam64ID.toString();
-			console.log(stat.steamID);
 			ids.push(stat.steamID);
 		}
 
