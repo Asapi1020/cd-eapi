@@ -20,16 +20,18 @@ export async function postRequestToRecord(
 	request: PostRecordRequest,
 ): Promise<Record> {
 	const steamAPIClient = new SteamAPIClient();
-	try {
-		// fetch server info but it seems that only servers with 7777 GamePort are visible
-		const serverInfo = await steamAPIClient.getServerInfo(
-			request.matchInfo.serverIP.split(":")[0],
-		);
-		if (serverInfo.name) {
-			request.matchInfo.serverName = serverInfo.name;
+	if (!request.matchInfo.isSolo) {
+		try {
+			// fetch server info but it seems that only servers with 7777 GamePort are visible
+			const serverInfo = await steamAPIClient.getServerInfo(
+				request.matchInfo.serverIP.split(":")[0],
+			);
+			if (serverInfo.name) {
+				request.matchInfo.serverName = serverInfo.name;
+			}
+		} catch (error) {
+			console.error("Server Info Error", error);
 		}
-	} catch (error) {
-		console.error("Server Info Error", error);
 	}
 
 	try {
@@ -65,6 +67,33 @@ export async function postRequestToRecord(
 	return record;
 }
 
+async function sendDiscordWebhookWithRetry(
+	webhookURL: string,
+	payload: DiscordWebhookPayload,
+	retries = 3,
+	delay = 1000,
+): Promise<void> {
+	for (let attempt = 1; attempt <= retries; attempt++) {
+		try {
+			await sendDiscordWebhook(webhookURL, payload);
+			return;
+		} catch (error) {
+			if (attempt < retries) {
+				console.warn(
+					`Retrying to send Discord Webhook (attempt ${attempt} of ${retries})`,
+				);
+				setTimeout(() => {}, delay);
+			} else {
+				console.error(
+					"Failed to send Discord Webhook after multiple attempts",
+					error,
+				);
+				throw error;
+			}
+		}
+	}
+}
+
 export async function notifyRecordToDiscord(record: Record): Promise<void> {
 	const webhookURL = process.env.DISCORD_WEBHOOK_URL;
 	if (!webhookURL) {
@@ -93,7 +122,7 @@ export async function notifyRecordToDiscord(record: Record): Promise<void> {
 	};
 
 	try {
-		await sendDiscordWebhook(webhookURL, payload);
+		await sendDiscordWebhookWithRetry(webhookURL, payload);
 	} catch (error) {
 		console.error("Failed to send Discord Webhook", error);
 	}
