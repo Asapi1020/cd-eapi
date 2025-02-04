@@ -84,15 +84,22 @@ export async function notifyRecordToDiscord(record: Record): Promise<void> {
 				},
 				title: record.matchInfo.mapName,
 				description: getBasicCDInfo(record.matchInfo.CDInfo),
-				fields: {
-					name: `Players (${record.userStats.length}/6)`,
-					value: record.userStats
-						.map((stat) => stat.playerName ?? stat.steamID)
-						.join("\n"),
-				},
+				fields: [
+					{
+						name: `Players (${record.userStats.length}/6)`,
+						value: record.userStats
+							.map((stat) => stat.playerName ?? stat.steamID)
+							.join("\n"),
+					},
+				],
 			},
 		],
 	};
+
+	console.log(
+		"Payload to be sent to Discord:",
+		JSON.stringify(payload, null, 2),
+	);
 
 	try {
 		await sendDiscordWebhook(webhookURL, payload);

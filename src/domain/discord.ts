@@ -18,6 +18,6 @@ export interface DiscordWebhookPayload {
 			name: string | null | undefined;
 			value: string | null | undefined;
 			inline?: boolean;
-		};
+		}[];
 	}[];
 }
