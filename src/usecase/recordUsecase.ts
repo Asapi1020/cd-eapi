@@ -67,33 +67,6 @@ export async function postRequestToRecord(
 	return record;
 }
 
-async function sendDiscordWebhookWithRetry(
-	webhookURL: string,
-	payload: DiscordWebhookPayload,
-	retries = 3,
-	delay = 1000,
-): Promise<void> {
-	for (let attempt = 1; attempt <= retries; attempt++) {
-		try {
-			await sendDiscordWebhook(webhookURL, payload);
-			return;
-		} catch (error) {
-			if (attempt < retries) {
-				console.warn(
-					`Retrying to send Discord Webhook (attempt ${attempt} of ${retries})`,
-				);
-				setTimeout(() => {}, delay);
-			} else {
-				console.error(
-					"Failed to send Discord Webhook after multiple attempts",
-					error,
-				);
-				throw error;
-			}
-		}
-	}
-}
-
 export async function notifyRecordToDiscord(record: Record): Promise<void> {
 	const webhookURL = process.env.DISCORD_WEBHOOK_URL;
 	if (!webhookURL) {
@@ -122,9 +95,10 @@ export async function notifyRecordToDiscord(record: Record): Promise<void> {
 	};
 
 	try {
-		await sendDiscordWebhookWithRetry(webhookURL, payload);
+		await sendDiscordWebhook(webhookURL, payload);
 	} catch (error) {
 		console.error("Failed to send Discord Webhook", error);
+		console.log({ webhookURL, payload });
 	}
 }
 
