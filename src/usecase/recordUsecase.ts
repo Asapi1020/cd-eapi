@@ -11,7 +11,10 @@ export async function postRecord(request: PostRecordRequest): Promise<void> {
 	const db = new MongoDB(client);
 	await db.postRecord(record);
 
-	if (record.matchInfo.isVictory) {
+	if (
+		record.matchInfo.isVictory &&
+		record.matchInfo.cheatMessages.length === 0
+	) {
 		await notifyRecordToDiscord(record);
 	}
 }
