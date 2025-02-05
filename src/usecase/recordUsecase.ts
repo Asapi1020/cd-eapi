@@ -96,6 +96,7 @@ export async function notifyRecordToDiscord(record: Record): Promise<void> {
 							.join("\n"),
 					},
 				],
+				timestamp: convertToISO8601(record.matchInfo.timeStamp),
 			},
 		],
 	};
@@ -115,4 +116,10 @@ export async function notifyRecordToDiscord(record: Record): Promise<void> {
 
 export function getBasicCDInfo(info: CDInfo): string {
 	return `SpawnCycle=${info.spawnCycle}\nMaxMonsters=${info.maxMonsters}\nCohortSize=${info.cohortSize}\nWaveSizeFakes=${info.waveSizeFakes}\nSpawnPoll=${info.spawnPoll}`;
+}
+
+export function convertToISO8601(dateStr: string): string {
+	// "2025/02/05 - 17:33:27" → "2025-02-05T17:33:27Z"
+	const parsed = `${dateStr.replace("/", "-").replace("/", "-").replace(" - ", "T")}Z`;
+	return parsed;
 }
