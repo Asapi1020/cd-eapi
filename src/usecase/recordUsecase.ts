@@ -90,6 +90,14 @@ export async function notifyRecordToDiscord(record: Record): Promise<void> {
 				description: getBasicCDInfo(record.matchInfo.CDInfo),
 				fields: [
 					{
+						name: "Other Info",
+						value: getStrangeSettings(record.matchInfo.CDInfo),
+					},
+					{
+						name: "Mutators",
+						value: record.matchInfo.mutators.join("\n") ?? "Nothing",
+					},
+					{
 						name: `Players (${record.userStats.length}/6)`,
 						value: record.userStats
 							.map((stat) => stat.playerName ?? stat.steamID)
@@ -111,11 +119,36 @@ export async function notifyRecordToDiscord(record: Record): Promise<void> {
 	} catch (error) {
 		console.error("Failed to send Discord Webhook", error);
 		console.log({ webhookURL, payload });
+		await sendDiscordWebhook(webhookURL, {
+			content: "Failed to send Discord Webhook",
+		});
 	}
 }
 
 export function getBasicCDInfo(info: CDInfo): string {
 	return `SpawnCycle=${info.spawnCycle}\nMaxMonsters=${info.maxMonsters}\nCohortSize=${info.cohortSize}\nWaveSizeFakes=${info.waveSizeFakes}\nSpawnPoll=${info.spawnPoll}`;
+}
+
+export function getStrangeSettings(info: CDInfo): string {
+	return (
+		`${info.spawnMod > 0 ? `SpawnMod=${info.spawnMod}\n` : ""}` +
+		`${info.trashHPFakes !== 6 ? `TrashHPFakes=${info.trashHPFakes}\n` : ""}` +
+		`${info.QPHPFakes !== 6 ? `QPHPFakes=${info.QPHPFakes}\n` : ""}` +
+		`${info.FPHPFakes !== 6 ? `FPHPFakes=${info.FPHPFakes}\n` : ""}` +
+		`${info.SCHPFakes !== 6 ? `SCHPFakes=${info.SCHPFakes}\n` : ""}` +
+		`${info.albinoAlphas ? "" : "AlbinoAlphas=false"}` +
+		`${info.albinoCrawlers ? "" : "AlbinoCrawlers=false"}` +
+		`${info.albinoGorefasts ? "" : "AlbinoGorefasts=false"}` +
+		`${info.disableRobots ? "" : "DisableRobots=false"}` +
+		`${info.disableSpawners ? "" : "DisableSpawners=false"}` +
+		`${info.fleshpoundRageSpawns ? "FleshpoundRageSpawns=true" : ""}` +
+		`${info.startWithFullAmmo ? "" : "StartWithFullAmmo=false"}` +
+		`${info.startWithFullArmor ? "StartWithFullArmor=true" : ""}` +
+		`${info.startWithFullGrenade ? "" : "StartWithFullGrenade=false"}` +
+		`ZTSpawnMode=${info.ZTSpawnMode}\n` +
+		`ZTSpawnSlowDown=${info.ZTSpawnSlowDown}\n` +
+		`ZedsTeleportCloser=${info.zedsTeleportCloser}`
+	);
 }
 
 export function convertToISO8601(dateStr: string): string {
