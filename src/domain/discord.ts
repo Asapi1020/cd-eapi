@@ -2,21 +2,24 @@ export interface DiscordWebhookPayload {
 	content?: string;
 	embeds?: {
 		author?: {
-			name: string | null | undefined;
-			url?: string | null | undefined;
-			icon_url?: string | null | undefined;
+			name: string;
+			url?: string;
+			icon_url?: string;
 		};
-		title: string | null | undefined;
-		url?: string | null | undefined;
-		description: string | null | undefined;
+		title: string;
+		url?: string;
+		description: string;
 		image?: {
-			url: string | null | undefined;
+			url: string;
+		};
+		thumbnail?: {
+			url: string;
 		};
 		color?: number;
-		timestamp?: string | null | undefined;
+		timestamp?: string;
 		fields?: {
-			name: string | null | undefined;
-			value: string | null | undefined;
+			name: string;
+			value: string;
 			inline?: boolean;
 		}[];
 	}[];

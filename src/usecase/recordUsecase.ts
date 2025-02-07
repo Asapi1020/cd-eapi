@@ -1,6 +1,7 @@
 import { createId as cuid } from "@paralleldrive/cuid2";
 import type { CDInfo, PostRecordRequest, Record } from "../domain";
 import type { DiscordWebhookPayload } from "../domain/discord";
+import { getMapThumbnail } from "../domain/kf";
 import { Client, SteamAPIClient } from "../framework";
 import { sendDiscordWebhook } from "../framework/discordWebhookClient";
 import { MongoDB, VERSION } from "../infra";
@@ -78,6 +79,8 @@ export async function notifyRecordToDiscord(record: Record): Promise<void> {
 		return;
 	}
 
+	const [mapName, mapThumbnail] = getMapThumbnail(record.matchInfo.mapName);
+
 	const payload: DiscordWebhookPayload = {
 		embeds: [
 			{
@@ -86,8 +89,11 @@ export async function notifyRecordToDiscord(record: Record): Promise<void> {
 						? "Solo"
 						: (record.matchInfo.serverName ?? record.matchInfo.serverIP),
 				},
-				title: record.matchInfo.mapName,
+				title: mapName,
 				description: getBasicCDInfo(record.matchInfo.CDInfo),
+				thumbnail: {
+					url: mapThumbnail,
+				},
 				fields: [
 					{
 						name: "Other Info",
