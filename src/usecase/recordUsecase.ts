@@ -1,6 +1,6 @@
 import { createId as cuid } from "@paralleldrive/cuid2";
-import type { CDInfo, PostRecordRequest, Record } from "../domain";
-import type { DiscordWebhookPayload } from "../domain/discord";
+import type { CDInfo, PostRecordRequest, Record, UserStats } from "../domain";
+import { type DiscordWebhookPayload, perkData } from "../domain/discord";
 import { getMapInfo } from "../domain/kf";
 import { Client, SteamAPIClient } from "../framework";
 import { sendDiscordWebhook } from "../framework/discordWebhookClient";
@@ -20,7 +20,7 @@ export async function postRecord(request: PostRecordRequest): Promise<void> {
 	}
 }
 
-export async function postRequestToRecord(
+async function postRequestToRecord(
 	request: PostRecordRequest,
 ): Promise<Record> {
 	const steamAPIClient = new SteamAPIClient();
@@ -72,7 +72,7 @@ export async function postRequestToRecord(
 	return record;
 }
 
-export async function notifyRecordToDiscord(record: Record): Promise<void> {
+async function notifyRecordToDiscord(record: Record): Promise<void> {
 	const webhookURL = process.env.DISCORD_WEBHOOK_URL;
 	if (!webhookURL) {
 		console.error("Discord Webhook URL is not defined");
@@ -105,9 +105,7 @@ export async function notifyRecordToDiscord(record: Record): Promise<void> {
 					},
 					{
 						name: `Players (${record.userStats.length}/6)`,
-						value: record.userStats
-							.map((stat) => stat.playerName ?? stat.steamID)
-							.join("\n"),
+						value: getPlayersInfo(record.userStats),
 					},
 				],
 				timestamp: convertToISO8601(record.matchInfo.timeStamp),
@@ -131,11 +129,11 @@ export async function notifyRecordToDiscord(record: Record): Promise<void> {
 	}
 }
 
-export function getBasicCDInfo(info: CDInfo): string {
+function getBasicCDInfo(info: CDInfo): string {
 	return `SpawnCycle=${info.spawnCycle}\nMaxMonsters=${info.maxMonsters}\nCohortSize=${info.cohortSize}\nWaveSizeFakes=${info.waveSizeFakes}\nSpawnPoll=${info.spawnPoll}`;
 }
 
-export function getStrangeSettings(info: CDInfo): string {
+function getStrangeSettings(info: CDInfo): string {
 	return (
 		`${info.spawnMod > 0 ? `SpawnMod=${info.spawnMod}\n` : ""}` +
 		`${info.trashHPFakes !== 6 ? `TrashHPFakes=${info.trashHPFakes}\n` : ""}` +
@@ -157,7 +155,18 @@ export function getStrangeSettings(info: CDInfo): string {
 	);
 }
 
-export function convertToISO8601(dateStr: string): string {
+function getPlayersInfo(stats: UserStats[]): string {
+	const sortedStats = stats.sort((a, b) =>
+		a.perkClass.localeCompare(b.perkClass),
+	);
+	const playerNames = sortedStats.map(
+		(stat) =>
+			`${perkData[stat.perkClass.toLowerCase()] ?? "?"} ${stat.playerName ?? stat.steamID}`,
+	);
+	return playerNames.join("\n");
+}
+
+function convertToISO8601(dateStr: string): string {
 	// "2025/02/05 - 17:33:27" → "2025-02-05T17:33:27Z"
 	const parsed = `${dateStr.replace("/", "-").replace("/", "-").replace(" - ", "T")}Z`;
 	return parsed;
