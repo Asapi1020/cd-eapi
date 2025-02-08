@@ -2,6 +2,7 @@ import type { Collection, Db, MongoClient } from "mongodb";
 import type { Record, User } from "../domain/model";
 
 export const VERSION = "1.0.1";
+const PER_PAGE = 20;
 
 export interface Table {
 	record: Collection<Record>;
@@ -20,8 +21,13 @@ export class MongoDB {
 		};
 	}
 
-	public async getRecords(): Promise<Record[]> {
-		return await this.collection.record.find({ version: VERSION }).toArray();
+	public async getRecords(page: number): Promise<Record[]> {
+		const skip = (page - 1) * PER_PAGE;
+		return await this.collection.record
+			.find({ version: VERSION })
+			.skip(skip)
+			.limit(PER_PAGE)
+			.toArray();
 	}
 
 	public async postRecord(record: Record): Promise<void> {

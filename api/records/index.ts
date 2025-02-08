@@ -19,13 +19,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 }
 
 const getRecords = async (
-	_req: VercelRequest,
+	req: VercelRequest,
 	res: VercelResponse,
 ): Promise<VercelResponse> => {
 	try {
+		const { page } = req.query;
+		const pageNum =
+			typeof page !== "string" || !page
+				? 1
+				: Math.max(Number.parseInt(page), 1);
 		const client = await Client.mongo();
 		const model = new MongoDB(client);
-		const records = await model.getRecords();
+		const records = await model.getRecords(pageNum);
 		return res.status(200).json({ data: records });
 	} catch (error) {
 		console.error(error);
