@@ -1,4 +1,4 @@
-const mapData: { [key: string]: [string, string] } = {
+export const mapData: { [key: string]: [string, string] } = {
 	// Official Maps
 	"kf-bioticslab": [
 		"Biotics Lab",
@@ -232,9 +232,4 @@ const mapData: { [key: string]: [string, string] } = {
 	"kf-compound_redux": ["Compound Redux", "https://i.imgur.com/fnnQP8w.png"],
 };
 
-export function getMapInfo(mapName: string): [string, string] {
-	const lowerCaseMapName = mapName.toLowerCase();
-	return (
-		mapData[lowerCaseMapName] ?? [mapName, "https://i.imgur.com/KCgCnmJ.jpeg"]
-	);
-}
+export const defaultMapImage = "https://i.imgur.com/KCgCnmJ.jpeg";

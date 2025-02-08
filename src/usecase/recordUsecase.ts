@@ -1,7 +1,7 @@
 import { createId as cuid } from "@paralleldrive/cuid2";
 import type { CDInfo, PostRecordRequest, Record, UserStats } from "../domain";
 import { type DiscordWebhookPayload, perkData } from "../domain/discord";
-import { getMapInfo } from "../domain/kf";
+import { defaultMapImage, mapData } from "../domain/kf";
 import { Client, SteamAPIClient } from "../framework";
 import { sendDiscordWebhook } from "../framework/discordWebhookClient";
 import { MongoDB, VERSION } from "../infra";
@@ -127,6 +127,11 @@ async function notifyRecordToDiscord(record: Record): Promise<void> {
 			content: "Failed to send Discord Webhook",
 		});
 	}
+}
+
+export function getMapInfo(mapName: string): [string, string] {
+	const lowerCaseMapName = mapName.toLowerCase();
+	return mapData[lowerCaseMapName] ?? [mapName, defaultMapImage];
 }
 
 function getBasicCDInfo(info: CDInfo): string {
