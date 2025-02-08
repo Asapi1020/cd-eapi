@@ -142,15 +142,15 @@ export function getStrangeSettings(info: CDInfo): string {
 		`${info.QPHPFakes !== 6 ? `QPHPFakes=${info.QPHPFakes}\n` : ""}` +
 		`${info.FPHPFakes !== 6 ? `FPHPFakes=${info.FPHPFakes}\n` : ""}` +
 		`${info.SCHPFakes !== 6 ? `SCHPFakes=${info.SCHPFakes}\n` : ""}` +
-		`${info.albinoAlphas ? "" : "AlbinoAlphas=false"}` +
-		`${info.albinoCrawlers ? "" : "AlbinoCrawlers=false"}` +
-		`${info.albinoGorefasts ? "" : "AlbinoGorefasts=false"}` +
-		`${info.disableRobots ? "" : "DisableRobots=false"}` +
-		`${info.disableSpawners ? "" : "DisableSpawners=false"}` +
-		`${info.fleshpoundRageSpawns ? "FleshpoundRageSpawns=true" : ""}` +
-		`${info.startWithFullAmmo ? "" : "StartWithFullAmmo=false"}` +
-		`${info.startWithFullArmor ? "StartWithFullArmor=true" : ""}` +
-		`${info.startWithFullGrenade ? "" : "StartWithFullGrenade=false"}` +
+		`${info.albinoAlphas ? "" : "AlbinoAlphas=false\n"}` +
+		`${info.albinoCrawlers ? "" : "AlbinoCrawlers=false\n"}` +
+		`${info.albinoGorefasts ? "" : "AlbinoGorefasts=false\n"}` +
+		`${info.disableRobots ? "" : "DisableRobots=false\n"}` +
+		`${info.disableSpawners ? "" : "DisableSpawners=false\n"}` +
+		`${info.fleshpoundRageSpawns ? "FleshpoundRageSpawns=true\n" : ""}` +
+		`${info.startWithFullAmmo ? "" : "StartWithFullAmmo=false\n"}` +
+		`${info.startWithFullArmor ? "StartWithFullArmor=true\n" : ""}` +
+		`${info.startWithFullGrenade ? "" : "StartWithFullGrenade=false\n"}` +
 		`ZTSpawnMode=${info.ZTSpawnMode}\n` +
 		`ZTSpawnSlowDown=${info.ZTSpawnSlowDown}\n` +
 		`ZedsTeleportCloser=${info.zedsTeleportCloser}`
