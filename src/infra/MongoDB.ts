@@ -25,6 +25,7 @@ export class MongoDB {
 		const skip = (page - 1) * PER_PAGE;
 		return await this.collection.record
 			.find({ version: VERSION })
+			.sort({ _id: -1 })
 			.skip(skip)
 			.limit(PER_PAGE)
 			.toArray();
