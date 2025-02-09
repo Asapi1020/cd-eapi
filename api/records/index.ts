@@ -30,8 +30,8 @@ const getRecords = async (
 				: Math.max(Number.parseInt(page), 1);
 		const client = await Client.mongo();
 		const model = new MongoDB(client);
-		const records = await model.getRecords(pageNum);
-		return res.status(200).json({ data: records });
+		const [records, total] = await model.getRecords(pageNum);
+		return res.status(200).json({ data: records, total });
 	} catch (error) {
 		console.error(error);
 		return res.status(500).json(error);

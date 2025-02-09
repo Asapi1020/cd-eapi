@@ -21,14 +21,18 @@ export class MongoDB {
 		};
 	}
 
-	public async getRecords(page: number): Promise<Record[]> {
+	public async getRecords(page: number): Promise<[Record[], number]> {
 		const skip = (page - 1) * PER_PAGE;
-		return await this.collection.record
+		const total = await this.collection.record.countDocuments({
+			version: VERSION,
+		});
+		const records = await this.collection.record
 			.find({ version: VERSION })
 			.sort({ _id: -1 })
 			.skip(skip)
 			.limit(PER_PAGE)
 			.toArray();
+		return [records, total];
 	}
 
 	public async postRecord(record: Record): Promise<void> {
