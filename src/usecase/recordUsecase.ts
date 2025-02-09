@@ -49,7 +49,6 @@ async function postRequestToRecord(
 		}
 
 		const players = await steamAPIClient.getPlayerSummaries(ids);
-		console.log(players);
 		const playerMap = new Map(
 			players.map((player) => [player.id, player.name]),
 		);
@@ -62,6 +61,8 @@ async function postRequestToRecord(
 	} catch (error) {
 		console.error("Player Info Error", error);
 	}
+
+	request.matchInfo.timeStamp = new Date().toISOString();
 
 	const record: Record = {
 		...request,
@@ -108,7 +109,7 @@ async function notifyRecordToDiscord(record: Record): Promise<void> {
 						value: getPlayersInfo(record.userStats),
 					},
 				],
-				timestamp: convertToISO8601(record.matchInfo.timeStamp),
+				timestamp: record.matchInfo.timeStamp,
 			},
 		],
 	};
@@ -169,10 +170,4 @@ function getPlayersInfo(stats: UserStats[]): string {
 			`${perkData[stat.perkClass.toLowerCase()] ?? "?"} ${stat.playerName ?? stat.steamID}`,
 	);
 	return playerNames.join("\n");
-}
-
-function convertToISO8601(dateStr: string): string {
-	// "2025/02/05 - 17:33:27" → "2025-02-05T17:33:27Z"
-	const parsed = `${dateStr.replace("/", "-").replace("/", "-").replace(" - ", "T")}Z`;
-	return parsed;
 }

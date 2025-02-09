@@ -1,7 +1,7 @@
 import type { Collection, Db, MongoClient } from "mongodb";
 import type { Record, User } from "../domain/model";
 
-export const VERSION = "1.0.1";
+export const VERSION = "2.0.0";
 const PER_PAGE = 20;
 
 export interface Table {
