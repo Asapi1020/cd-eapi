@@ -6,6 +6,12 @@ import { Client, SteamAPIClient } from "../framework";
 import { sendDiscordWebhook } from "../framework/discordWebhookClient";
 import { MongoDB, VERSION } from "../infra";
 
+export async function getRecordByID(id: string): Promise<Record | null> {
+	const client = await Client.mongo();
+	const db = new MongoDB(client);
+	return await db.getRecord(id);
+}
+
 export async function postRecord(request: PostRecordRequest): Promise<void> {
 	const record = await postRequestToRecord(request);
 	const client = await Client.mongo();

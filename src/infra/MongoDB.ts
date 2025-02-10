@@ -21,6 +21,10 @@ export class MongoDB {
 		};
 	}
 
+	public async getRecord(id: string): Promise<Record | null> {
+		return await this.collection.record.findOne({ id });
+	}
+
 	public async getRecords(page: number): Promise<[Record[], number]> {
 		const skip = (page - 1) * PER_PAGE;
 		const total = await this.collection.record.countDocuments({
