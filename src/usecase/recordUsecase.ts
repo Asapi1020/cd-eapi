@@ -112,7 +112,7 @@ async function notifyRecordToDiscord(record: Record): Promise<void> {
 					},
 					{
 						name: `Players (${record.userStats.length}/6)`,
-						value: getPlayersInfo(record.userStats),
+						value: `${getPlayersInfo(record.userStats)}\n\n[View Details](https://cd-record-leaderboard.vercel.app/records/${record.id})`,
 					},
 				],
 				timestamp: record.matchInfo.timeStamp,
