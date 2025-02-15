@@ -4,3 +4,8 @@ export interface PostRecordRequest {
 	matchInfo: MatchInfo;
 	userStats: UserStats[];
 }
+
+export interface getRecordsParams {
+	page: number;
+	isVictory: boolean;
+}

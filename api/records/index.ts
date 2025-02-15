@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import type { getRecordsParams } from "../../src/domain";
 import { Client } from "../../src/framework";
 import { MongoDB } from "../../src/infra";
 import { postRecord } from "../../src/usecase";
@@ -23,14 +24,18 @@ const getRecords = async (
 	res: VercelResponse,
 ): Promise<VercelResponse> => {
 	try {
-		const { page } = req.query;
+		const { page, isVictory } = req.query;
 		const pageNum =
 			typeof page !== "string" || !page
 				? 1
 				: Math.max(Number.parseInt(page), 1);
+		const params: getRecordsParams = {
+			page: pageNum,
+			isVictory: isVictory === "1",
+		};
 		const client = await Client.mongo();
 		const model = new MongoDB(client);
-		const [records, total] = await model.getRecords(pageNum);
+		const [records, total] = await model.getRecords(params);
 		return res.status(200).json({ data: records, total });
 	} catch (error) {
 		console.error(error);

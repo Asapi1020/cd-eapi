@@ -1,4 +1,5 @@
 import type { Collection, Db, MongoClient } from "mongodb";
+import type { getRecordsParams } from "../domain";
 import type { Record, User } from "../domain/model";
 
 export const VERSION = "2.0.0";
@@ -25,13 +26,20 @@ export class MongoDB {
 		return await this.collection.record.findOne({ id });
 	}
 
-	public async getRecords(page: number): Promise<[Record[], number]> {
+	public async getRecords(
+		params: getRecordsParams,
+	): Promise<[Record[], number]> {
+		const { page, isVictory } = params;
 		const skip = (page - 1) * PER_PAGE;
-		const total = await this.collection.record.countDocuments({
-			version: VERSION,
-		});
+		const filter = { version: VERSION };
+		if (isVictory) {
+			filter["matchInfo.isVictory"] = true;
+		}
+
+		const total = await this.collection.record.countDocuments(filter);
+
 		const records = await this.collection.record
-			.find({ version: VERSION })
+			.find(filter)
 			.sort({ _id: -1 })
 			.skip(skip)
 			.limit(PER_PAGE)
