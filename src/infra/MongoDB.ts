@@ -29,11 +29,16 @@ export class MongoDB {
 	public async getRecords(
 		params: getRecordsParams,
 	): Promise<[Record[], number]> {
-		const { page, isVictory } = params;
+		const { page, isVictory, steamID } = params;
 		const skip = (page - 1) * PER_PAGE;
 		const filter = { version: VERSION };
+
 		if (isVictory) {
 			filter["matchInfo.isVictory"] = true;
+		}
+
+		if (steamID) {
+			filter["userStats.steamID"] = steamID;
 		}
 
 		const total = await this.collection.record.countDocuments(filter);
