@@ -24,14 +24,18 @@ const getRecords = async (
 	res: VercelResponse,
 ): Promise<VercelResponse> => {
 	try {
-		const { page, isVictory } = req.query;
+		const { page, isVictory, steamID, isAll } = req.query;
+
 		const pageNum =
 			typeof page !== "string" || !page
 				? 1
 				: Math.max(Number.parseInt(page), 1);
+
 		const params: getRecordsParams = {
 			page: pageNum,
 			isVictory: isVictory === "1",
+			steamID: typeof steamID === "string" ? steamID : undefined,
+			isAll: isAll === "1",
 		};
 		const client = await Client.mongo();
 		const model = new MongoDB(client);

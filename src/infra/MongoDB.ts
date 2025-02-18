@@ -29,7 +29,7 @@ export class MongoDB {
 	public async getRecords(
 		params: getRecordsParams,
 	): Promise<[Record[], number]> {
-		const { page, isVictory, steamID } = params;
+		const { page, isVictory, steamID, isAll } = params;
 		const skip = (page - 1) * PER_PAGE;
 		const filter = { version: VERSION };
 
@@ -43,12 +43,11 @@ export class MongoDB {
 
 		const total = await this.collection.record.countDocuments(filter);
 
-		const records = await this.collection.record
-			.find(filter)
-			.sort({ _id: -1 })
-			.skip(skip)
-			.limit(PER_PAGE)
-			.toArray();
+		const query = this.collection.record.find(filter).sort({ _id: -1 });
+
+		const records = isAll
+			? await query.toArray()
+			: await query.skip(skip).limit(PER_PAGE).toArray();
 		return [records, total];
 	}
 
