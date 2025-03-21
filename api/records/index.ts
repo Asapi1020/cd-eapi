@@ -3,6 +3,7 @@ import type { getRecordsParams } from "../../src/domain";
 import { Client } from "../../src/framework";
 import { MongoDB } from "../../src/infra";
 import { postRecord } from "../../src/usecase";
+import { notifyError } from "../../src/usecase/ErrorHandler";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
 	if (req.method === "GET") {
@@ -58,6 +59,7 @@ const postRecords = async (
 		return res.status(200).json({ message: "Successfully post record" });
 	} catch (error) {
 		console.error(error);
+		await notifyError(error).catch(console.error);
 		return res.status(500).json(error);
 	}
 };

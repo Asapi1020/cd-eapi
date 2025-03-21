@@ -1,0 +1,10 @@
+{
+	"compilerOptions": {
+		"moduleResolution": "node",
+		"module": "commonJS",
+		"lib": ["ES2022"],
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"target": "ES2015"
+	}
+}

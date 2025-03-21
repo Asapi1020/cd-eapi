@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@asp1020/discord-webhook-client':
+        specifier: ^1.0.0
+        version: 1.0.0
+      '@asp1020/type-utils':
+        specifier: ^1.0.4
+        version: 1.0.4
       '@paralleldrive/cuid2':
         specifier: ^2.2.2
         version: 2.2.2
@@ -44,6 +50,12 @@ importers:
         version: 5.6.3
 
 packages:
+
+  '@asp1020/discord-webhook-client@1.0.0':
+    resolution: {integrity: sha512-Qneygt8SeanEHvUBePxtMT2oWR6tHTz2RQxT0tbch26bntGlSq/cJLwVAHiKP0GJY5Ox8PMA+M0YEXw3xxIY9g==}
+
+  '@asp1020/type-utils@1.0.4':
+    resolution: {integrity: sha512-bYAX5B5VGcc/4Pm7Gi4OlwSx9XUJEDEWayhkJbtlx3fro4l6guXl1m0ZMgEUtBkm41zP16mHV+ri1pUNv2EYIw==}
 
   '@biomejs/biome@1.9.3':
     resolution: {integrity: sha512-POjAPz0APAmX33WOQFGQrwLvlu7WLV4CFJMlB12b6ZSg+2q6fYu9kZwLCOA+x83zXfcPd1RpuWOKJW0GbBwLIQ==}
@@ -302,6 +314,7 @@ packages:
   bson@6.8.0:
     resolution: {integrity: sha512-iOJg8pr7wq2tg/zSlCCHMi3hMm5JTOxLTagf3zxhcenHsFp+c6uOs6K7W5UE7A4QIJGtqh/ZovFNMP4mOPJynQ==}
     engines: {node: '>=16.20.1'}
+    deprecated: a critical bug affecting only useBigInt64=true deserialization usage is fixed in bson@6.10.3
 
   cacheable-lookup@7.0.0:
     resolution: {integrity: sha512-+qJyx4xiKra8mZrcwhjMRMUhD5NR1R8esPkzIYxX96JiecFoxAXFuz/GpR3+ev4PE1WamHip78wV0vcmPQtp8w==}
@@ -875,6 +888,9 @@ packages:
     resolution: {integrity: sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==}
     engines: {node: '>=10'}
 
+  ramda@0.30.1:
+    resolution: {integrity: sha512-tEF5I22zJnuclswcZMc8bDIrwRHRzf+NqVEmqg50ShAZMP7MWeR/RGDthfM/p+BlqvF2fXAzpn8i+SJcYD3alw==}
+
   readable-stream@1.0.34:
     resolution: {integrity: sha512-ok1qVCJuRkNmvebYikljxJA/UEsKwLl2nI1OmaqAu4/UE+h0wKCHok4XkL/gvi39OacXvw59RJUOFUkDib2rHg==}
 
@@ -1104,6 +1120,12 @@ packages:
     engines: {node: '>=6'}
 
 snapshots:
+
+  '@asp1020/discord-webhook-client@1.0.0': {}
+
+  '@asp1020/type-utils@1.0.4':
+    dependencies:
+      ramda: 0.30.1
 
   '@biomejs/biome@1.9.3':
     optionalDependencies:
@@ -1865,6 +1887,8 @@ snapshots:
   queue-microtask@1.2.3: {}
 
   quick-lru@5.1.1: {}
+
+  ramda@0.30.1: {}
 
   readable-stream@1.0.34:
     dependencies:

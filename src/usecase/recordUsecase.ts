@@ -1,6 +1,7 @@
+import type { Payload } from "@asp1020/discord-webhook-client";
 import { createId as cuid } from "@paralleldrive/cuid2";
 import type { CDInfo, PostRecordRequest, Record, UserStats } from "../domain";
-import { type DiscordWebhookPayload, perkData } from "../domain/discord";
+import { perkData } from "../domain/discord";
 import { defaultMapImage, mapData } from "../domain/kf";
 import { Client, SteamAPIClient } from "../framework";
 import { sendDiscordWebhook } from "../framework/discordWebhookClient";
@@ -88,7 +89,7 @@ async function notifyRecordToDiscord(record: Record): Promise<void> {
 
 	const [mapName, mapThumbnail] = getMapInfo(record.matchInfo.mapName);
 
-	const payload: DiscordWebhookPayload = {
+	const payload: Payload = {
 		embeds: [
 			{
 				author: {
@@ -125,15 +126,7 @@ async function notifyRecordToDiscord(record: Record): Promise<void> {
 		JSON.stringify(payload, null, 2),
 	);
 
-	try {
-		await sendDiscordWebhook(webhookURL, payload);
-	} catch (error) {
-		console.error("Failed to send Discord Webhook", error);
-		console.log({ webhookURL, payload });
-		await sendDiscordWebhook(webhookURL, {
-			content: "Failed to send Discord Webhook",
-		});
-	}
+	await sendDiscordWebhook(webhookURL, payload);
 }
 
 export function getMapInfo(mapName: string): [string, string] {
