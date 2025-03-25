@@ -1,5 +1,6 @@
 import { GameDig, type QueryResult } from "gamedig";
-import type { SteamUser } from "../domain/model";
+import { type SteamUser, throwInternalServerError } from "../domain";
+import { toSteamUser } from "../interface-adapters/player";
 
 export class SteamAPIClient {
 	private key: string;
@@ -34,14 +35,9 @@ export class SteamAPIClient {
 		}
 
 		const data = await response.json();
-		const players: SteamUser[] = data.response.players.map((player) => {
-			return {
-				id: player.steamid,
-				name: player.personaname,
-				url: player.profileurl,
-				avatarHash: player.avatarhash,
-			};
-		});
-		return players;
+		return (
+			toSteamUser(data) ??
+			throwInternalServerError("Failed to parse player data")
+		);
 	}
 }

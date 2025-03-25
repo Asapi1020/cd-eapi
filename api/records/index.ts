@@ -1,7 +1,11 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import type { getRecordsParams } from "../../src/domain";
+import { BadRequestError } from "../../src/domain";
 import { Client } from "../../src/framework";
 import { MongoDB } from "../../src/infra";
+import {
+	toGetRecordsParams,
+	toPostRecordParams,
+} from "../../src/interface-adapters/record";
 import { postRecord } from "../../src/usecase";
 import { notifyError } from "../../src/usecase/ErrorHandler";
 
@@ -25,19 +29,7 @@ const getRecords = async (
 	res: VercelResponse,
 ): Promise<VercelResponse> => {
 	try {
-		const { page, isVictory, steamID, isAll } = req.query;
-
-		const pageNum =
-			typeof page !== "string" || !page
-				? 1
-				: Math.max(Number.parseInt(page), 1);
-
-		const params: getRecordsParams = {
-			page: pageNum,
-			isVictory: isVictory === "1",
-			steamID: typeof steamID === "string" ? steamID : undefined,
-			isAll: isAll === "1",
-		};
+		const params = toGetRecordsParams(req.query);
 		const client = await Client.mongo();
 		const model = new MongoDB(client);
 		const [records, total] = await model.getRecords(params);
@@ -55,11 +47,13 @@ const postRecords = async (
 	const { body } = req;
 
 	try {
-		await postRecord(body);
+		await postRecord(toPostRecordParams(body));
 		return res.status(200).json({ message: "Successfully post record" });
 	} catch (error) {
-		console.error(error);
 		await notifyError(error).catch(console.error);
+		if (error instanceof BadRequestError) {
+			return res.status(400).json({ message: error.message });
+		}
 		return res.status(500).json(error);
 	}
 };
