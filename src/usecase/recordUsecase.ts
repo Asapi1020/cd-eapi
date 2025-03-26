@@ -1,83 +1,116 @@
 import type { Payload } from "@asp1020/discord-webhook-client";
 import { createId as cuid } from "@paralleldrive/cuid2";
-import type { CDInfo, PostRecordRequest, Record, UserStats } from "../domain";
+import type { QueryResult } from "gamedig";
+import type {
+	CDInfo,
+	MatchInfo,
+	PostRecordRequest,
+	Record,
+	SteamUser,
+	UserStats,
+	getRecordsParams,
+} from "../domain";
 import { perkData } from "../domain/discord";
 import { defaultMapImage, mapData } from "../domain/kf";
-import { Client, SteamAPIClient } from "../framework";
+import { SteamAPIClient } from "../framework";
 import { sendDiscordWebhook } from "../framework/discordWebhookClient";
-import { MongoDB, VERSION } from "../infra";
+import { type MongoDB, VERSION } from "../infra";
 
-export async function getRecordByID(id: string): Promise<Record | null> {
-	const client = await Client.mongo();
-	const db = new MongoDB(client);
-	return await db.getRecord(id);
-}
-
-export async function postRecord(request: PostRecordRequest): Promise<void> {
-	const record = await postRequestToRecord(request);
-	const client = await Client.mongo();
-	const db = new MongoDB(client);
-	await db.postRecord(record);
-
-	if (
-		record.matchInfo.isVictory &&
-		record.matchInfo.cheatMessages.length === 0
-	) {
-		await notifyRecordToDiscord(record);
+export class RecordUsecase {
+	constructor(private db: MongoDB) {
+		this.db = db;
 	}
-}
 
-async function postRequestToRecord(
-	request: PostRecordRequest,
-): Promise<Record> {
-	const steamAPIClient = new SteamAPIClient();
-	if (!request.matchInfo.isSolo) {
-		try {
-			// fetch server info but it seems that only servers with 7777 GamePort are visible
-			const serverInfo = await steamAPIClient.getServerInfo(
-				request.matchInfo.serverIP.split(":")[0],
-			);
-			if (serverInfo.name) {
-				request.matchInfo.serverName = serverInfo.name;
-			}
-		} catch (error) {
-			console.error("Server Info Error", error);
+	public async getRecords(
+		params: getRecordsParams,
+	): Promise<[Record[], number]> {
+		return await this.db.getRecords(params);
+	}
+
+	public async getRecordByID(id: string): Promise<Record | null> {
+		return await this.db.getRecord(id);
+	}
+
+	public async postRecord(request: PostRecordRequest): Promise<void> {
+		const serverName = await this.fetchServerName(
+			request.matchInfo.serverIP,
+		).catch(() => undefined);
+
+		const steamUserMap = await this.getSteamUserMap(
+			request.userStats.map((stat) => stat.steamID),
+		).catch((error) => {
+			console.error("Steam User Map Error", error);
+			return new Map<string, SteamUser>();
+		});
+
+		const now = new Date();
+
+		const matchInfo: MatchInfo = {
+			...request.matchInfo,
+			serverName,
+			timeStamp: now.toISOString(),
+		};
+
+		const userStats: UserStats[] = request.userStats.map((stat) => {
+			const steamUser = steamUserMap.get(stat.steamID);
+			return {
+				...stat,
+				steamID: steamUser?.id ?? this.convertSteam32To64ID(stat.steamID),
+				playerName: steamUser?.name,
+			};
+		});
+
+		const id = cuid();
+		const record = { matchInfo, userStats, id, version: VERSION };
+		await this.db
+			.postRecord(record)
+			.catch((error) => console.error("Post Record Error", error));
+
+		if (
+			record.matchInfo.isVictory &&
+			record.matchInfo.cheatMessages.length === 0
+		) {
+			await notifyRecordToDiscord(record);
 		}
 	}
 
-	try {
-		// change steamID from 32 to 64
-		const ids: string[] = [];
-		for (const stat of request.userStats) {
-			const steam32ID = BigInt(Number.parseInt(stat.steamID));
-			const steam64ID = steam32ID + BigInt(76561197960265728);
-			stat.steamID = steam64ID.toString();
-			ids.push(stat.steamID);
-		}
+	private async fetchServerName(serverIP: string): Promise<string | null> {
+		const steamAPIClient = new SteamAPIClient();
+		const serverInfo: QueryResult = await steamAPIClient
+			.getServerInfo(serverIP.split(":")[0])
+			.catch((error) => {
+				console.error("Server Info Error", error);
+				return null;
+			});
+		return serverInfo?.name ?? null;
+	}
 
-		const players = await steamAPIClient.getPlayerSummaries(ids);
-		const playerMap = new Map(
-			players.map((player) => [player.id, player.name]),
+	private async getSteamUserMap(
+		steam32IDs: string[],
+	): Promise<Map<string, SteamUser>> {
+		const steamIDMap = new Map(
+			steam32IDs.map((id) => [id, this.convertSteam32To64ID(id)]),
 		);
-		for (const stat of request.userStats) {
-			const playerName = playerMap.get(stat.steamID);
-			if (playerName) {
-				stat.playerName = playerName;
-			}
-		}
-	} catch (error) {
-		console.error("Player Info Error", error);
+		const steam64IDs = Array.from(steamIDMap.values());
+		const steamUsers = await new SteamAPIClient().getPlayerSummaries(
+			steam64IDs,
+		);
+		const steamUserMap = new Map(
+			steam32IDs.map((steam32ID) => {
+				const steam64ID = steamIDMap.get(steam32ID);
+				const steamUser = steamUsers.find((user) => user.id === steam64ID);
+				return [steam32ID, steamUser];
+			}),
+		);
+		return steamUserMap;
 	}
 
-	request.matchInfo.timeStamp = new Date().toISOString();
-
-	const record: Record = {
-		...request,
-		id: cuid(),
-		version: VERSION,
-	};
-
-	return record;
+	private convertSteam32To64ID(steam32ID: string): string {
+		const steam32IDBigInt = BigInt(Number.parseInt(steam32ID));
+		const steam64IDBigInt = steam32IDBigInt + BigInt(76561197960265728);
+		const steam64ID = steam64IDBigInt.toString();
+		return steam64ID;
+	}
 }
 
 async function notifyRecordToDiscord(record: Record): Promise<void> {

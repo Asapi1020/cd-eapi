@@ -44,14 +44,11 @@ export const toPostRecordParams = (body: unknown): PostRecordRequest => {
 	};
 };
 
-export const toMatchInfo = (data: unknown): MatchInfo => {
+export const toMatchInfo = (data: unknown): Omit<MatchInfo, "timeStamp"> => {
 	if (!isObject(data)) {
 		throw new BadRequestError("Invalid parameter: data must be an object");
 	}
 	return {
-		timeStamp:
-			convertToString(data.timeStamp) ??
-			throwInvalidParamerterError("timeStamp"),
 		mapName:
 			convertToString(data.mapName) ?? throwInvalidParamerterError("mapName"),
 		serverName: convertToString(data.serverName),

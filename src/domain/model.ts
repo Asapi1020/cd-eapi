@@ -11,6 +11,19 @@ export interface MatchInfo {
 	CDInfo: CDInfo;
 }
 
+export interface MatchInfoV2 {
+	timestamp: Date;
+	mapName: string;
+	serverName?: string;
+	serverIP: string;
+	isVictory: boolean;
+	defeatWave: number;
+	cheatMessages: string[];
+	mutators: string[];
+	isSolo: boolean;
+	CDInfo: CDInfo;
+}
+
 export interface CDInfo {
 	spawnCycle: string;
 	maxMonsters: number;
@@ -66,17 +79,18 @@ export interface ZedKillType {
 	killCount: number;
 }
 
-export interface User {
-	id: string;
-	name: string;
-	steamID: string;
-}
-
 export interface Record {
 	id: string;
 	version?: string;
 	matchInfo: MatchInfo;
 	userStats: UserStats[];
+}
+
+export type MatchRecord = { recordID: string } & MatchInfo;
+
+export interface UserRecord {
+	steamID: string;
+	stats: ({ recordID: string } & UserStats)[];
 }
 
 export interface SteamUser {

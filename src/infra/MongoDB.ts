@@ -1,13 +1,12 @@
 import type { Collection, Db, MongoClient } from "mongodb";
 import type { getRecordsParams } from "../domain";
-import type { Record, User } from "../domain/model";
+import type { Record } from "../domain/model";
 
 export const VERSION = "2.0.0";
 const PER_PAGE = 20;
 
 export interface Table {
 	record: Collection<Record>;
-	user: Collection<User>;
 }
 
 export class MongoDB {
@@ -18,7 +17,6 @@ export class MongoDB {
 		this.db = client.db(process.env.DB_NAME);
 		this.collection = {
 			record: this.db.collection("record"),
-			user: this.db.collection("user"),
 		};
 	}
 

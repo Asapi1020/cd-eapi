@@ -6,7 +6,7 @@ import {
 	toGetRecordsParams,
 	toPostRecordParams,
 } from "../../src/interface-adapters/record";
-import { postRecord } from "../../src/usecase";
+import { RecordUsecase } from "../../src/usecase";
 import { notifyError } from "../../src/usecase/ErrorHandler";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -31,8 +31,8 @@ const getRecords = async (
 	try {
 		const params = toGetRecordsParams(req.query);
 		const client = await Client.mongo();
-		const model = new MongoDB(client);
-		const [records, total] = await model.getRecords(params);
+		const usecase = new RecordUsecase(new MongoDB(client));
+		const [records, total] = await usecase.getRecords(params);
 		return res.status(200).json({ data: records, total });
 	} catch (error) {
 		console.error(error);
@@ -44,12 +44,13 @@ const postRecords = async (
 	req: VercelRequest,
 	res: VercelResponse,
 ): Promise<VercelResponse> => {
-	const { body } = req;
-
 	try {
-		await postRecord(toPostRecordParams(body));
+		const client = await Client.mongo();
+		const usecase = new RecordUsecase(new MongoDB(client));
+		await usecase.postRecord(toPostRecordParams(req.body));
 		return res.status(200).json({ message: "Successfully post record" });
 	} catch (error) {
+		console.error(error);
 		await notifyError(error).catch(console.error);
 		if (error instanceof BadRequestError) {
 			return res.status(400).json({ message: error.message });

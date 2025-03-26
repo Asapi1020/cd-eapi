@@ -1,7 +1,7 @@
 import type { MatchInfo, UserStats } from "./model";
 
 export interface PostRecordRequest {
-	matchInfo: MatchInfo;
+	matchInfo: Omit<MatchInfo, "timeStamp">;
 	userStats: UserStats[];
 }
 

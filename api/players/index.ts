@@ -1,8 +1,4 @@
-import {
-	toString as convertToString,
-	isArray,
-	isString,
-} from "@asp1020/type-utils";
+import { isArray, isString } from "@asp1020/type-utils";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { BadRequestError, throwInvalidParamerterError } from "../../src/domain";
 import { SteamAPIClient } from "../../src/framework";
