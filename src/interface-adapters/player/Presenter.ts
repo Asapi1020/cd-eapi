@@ -26,5 +26,5 @@ export const toSteamUser = (data: unknown): SteamUser[] | undefined => {
 		};
 	});
 
-	return players.some(undefined) ? undefined : players;
+	return players.some((player) => !player) ? undefined : players;
 };

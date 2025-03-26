@@ -28,6 +28,7 @@ const getPlayers = async (req: VercelRequest, res: VercelResponse) => {
 		const data = await steamAPIClient.getPlayerSummaries(ids);
 		return res.status(200).json(data);
 	} catch (error) {
+		console.error(error);
 		if (error instanceof BadRequestError) {
 			return res.status(400).json({ message: error.message });
 		}
