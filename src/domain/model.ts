@@ -11,19 +11,6 @@ export interface MatchInfo {
 	CDInfo: CDInfo;
 }
 
-export interface MatchInfoV2 {
-	timestamp: Date;
-	mapName: string;
-	serverName?: string;
-	serverIP: string;
-	isVictory: boolean;
-	defeatWave: number;
-	cheatMessages: string[];
-	mutators: string[];
-	isSolo: boolean;
-	CDInfo: CDInfo;
-}
-
 export interface CDInfo {
 	spawnCycle: string;
 	maxMonsters: number;
@@ -86,11 +73,37 @@ export interface Record {
 	userStats: UserStats[];
 }
 
-export type MatchRecord = { recordID: string } & MatchInfo;
+export type MatchRecord = {
+	recordID: string;
+	timeStamp: Date;
+	mapName: string;
+	serverName?: string;
+	serverIP: string;
+	isVictory: boolean;
+	defeatWave: number;
+	cheatMessages: string[];
+	mutators: string[];
+	isSolo: boolean;
+	CDInfo: CDInfo;
+};
 
 export interface UserRecord {
+	recordID: string;
+	playerName?: string;
 	steamID: string;
-	stats: ({ recordID: string } & UserStats)[];
+	perkClass: string;
+	playTime: number;
+	damageDealt: number;
+	damageTaken: number;
+	healsGiven: number;
+	healsReceived: number;
+	doshEarned: number;
+	shotsFired: number;
+	shotsHit: number;
+	headShots: number;
+	deaths: number;
+	weaponDamages: WeaponDamage[];
+	zedKills: ZedKillType[];
 }
 
 export interface SteamUser {

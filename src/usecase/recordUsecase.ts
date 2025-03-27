@@ -66,6 +66,24 @@ export class RecordUsecase {
 			.postRecord(record)
 			.catch((error) => console.error("Post Record Error", error));
 
+		const matchRecord = {
+			...request.matchInfo,
+			serverName,
+			timeStamp: now,
+			recordID: id,
+		};
+		await this.db
+			.postMatchRecord(matchRecord)
+			.catch((error) => console.error("Post Match Record Error", error));
+
+		const userRecords = userStats.map((stat) => ({
+			...stat,
+			recordID: id,
+		}));
+		await this.db
+			.postUserRecords(userRecords)
+			.catch((error) => console.error("Post User Records Error", error));
+
 		if (
 			record.matchInfo.isVictory &&
 			record.matchInfo.cheatMessages.length === 0
