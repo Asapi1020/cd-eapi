@@ -10,11 +10,12 @@ import type {
 	UserStats,
 	getRecordsParams,
 } from "../domain";
-import { perkData } from "../domain/discord";
-import { defaultMapImage, mapData } from "../domain/kf";
+import { defaultMapImage, mapData } from "../domain/mapData";
+import { perkData } from "../domain/perkData";
 import { SteamAPIClient } from "../framework";
 import { sendDiscordWebhook } from "../framework/discordWebhookClient";
 import { type MongoDB, VERSION } from "../infra";
+import { notifyError } from "./ErrorHandler";
 
 export class RecordUsecase {
 	constructor(private db: MongoDB) {
@@ -40,6 +41,7 @@ export class RecordUsecase {
 			request.userStats.map((stat) => stat.steamID),
 		).catch((error) => {
 			console.error("Steam User Map Error", error);
+			notifyError(error);
 			return new Map<string, SteamUser>();
 		});
 
@@ -97,7 +99,7 @@ export class RecordUsecase {
 		const serverInfo: QueryResult = await steamAPIClient
 			.getServerInfo(serverIP.split(":")[0])
 			.catch((error) => {
-				console.error("Server Info Error", error);
+				console.log("Server Info Error", error);
 				return null;
 			});
 		return serverInfo?.name ?? null;

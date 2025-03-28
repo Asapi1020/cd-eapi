@@ -1,30 +1,3 @@
-export interface DiscordWebhookPayload {
-	content?: string;
-	embeds?: {
-		author?: {
-			name: string;
-			url?: string;
-			icon_url?: string;
-		};
-		title: string;
-		url?: string;
-		description: string;
-		image?: {
-			url: string;
-		};
-		thumbnail?: {
-			url: string;
-		};
-		color?: number;
-		timestamp?: string;
-		fields?: {
-			name: string;
-			value: string;
-			inline?: boolean;
-		}[];
-	}[];
-}
-
 export const perkData: { [key: string]: string } = {
 	"kfgame.kfperk_berserker": "<:Perk_Berserker:870822598118875136>",
 	"kfgame.kfperk_commando": "<:Perk_Commando:836879577081970759>",
