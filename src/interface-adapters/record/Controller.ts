@@ -35,7 +35,7 @@ export const toGetRecordsParamsV2 = (query: unknown): GetRecordsParamsV2 => {
 		throw new BadRequestError("Invalid parameter: query must be an object");
 	}
 	const page = toNumber(query.page) ?? 1;
-	const isVictory = query.isVictory === "1";
+	const isVictory = toBoolean(query.isVictory);
 	return { page: Math.max(page, 1), isVictory };
 };
 

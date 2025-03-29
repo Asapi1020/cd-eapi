@@ -24,7 +24,7 @@ const getRecords = async (
 		const [matchRecords, userRecords, total] =
 			await usecase.getRecordsV2(params);
 		const records = toRecordsForFrontend(matchRecords, userRecords);
-		return res.status(200).json({ data: { records, total } });
+		return res.status(200).json({ records, total });
 	} catch (error) {
 		console.error(error);
 		return res.status(500).json(error);
