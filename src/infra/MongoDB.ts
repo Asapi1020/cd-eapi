@@ -1,5 +1,5 @@
-import type { Collection, Db, MongoClient } from "mongodb";
-import type { getRecordsParams } from "../domain";
+import type { Collection, Db, Filter, MongoClient } from "mongodb";
+import type { GetRecordsParamsV2, getRecordsParams } from "../domain";
 import type { MatchRecord, Record, UserRecord } from "../domain/model";
 
 export const VERSION = "2.0.0";
@@ -51,6 +51,29 @@ export class MongoDB {
 			? await query.toArray()
 			: await query.skip(skip).limit(PER_PAGE).toArray();
 		return [records, total];
+	}
+
+	public async getRecordsV2(
+		params: GetRecordsParamsV2,
+	): Promise<[MatchRecord[], UserRecord[], number]> {
+		const skip = (params.page - 1) * PER_PAGE;
+		const filter: Filter<MatchRecord> = params.isVictory
+			? { isVictory: true }
+			: {};
+
+		const total = await this.collection.matchRecord.countDocuments(filter);
+		const query = this.collection.matchRecord
+			.find(filter)
+			.sort({ timeStamp: -1 });
+		const matchRecords = await query.skip(skip).limit(PER_PAGE).toArray();
+
+		const userStats = await this.collection.userRecord
+			.find({
+				recordID: { $in: matchRecords.map((record) => record.recordID) },
+			})
+			.toArray();
+
+		return [matchRecords, userStats, total];
 	}
 
 	public async postRecord(record: Record): Promise<void> {

@@ -8,6 +8,7 @@ import {
 import {
 	BadRequestError,
 	type CDInfo,
+	type GetRecordsParamsV2,
 	type MatchInfo,
 	type PostRecordRequest,
 	type UserStats,
@@ -27,6 +28,15 @@ export const toGetRecordsParams = (query: unknown): getRecordsParams => {
 	const isAll = query.isAll === "1";
 
 	return { page: Math.max(page, 1), isVictory, steamID, isAll };
+};
+
+export const toGetRecordsParamsV2 = (query: unknown): GetRecordsParamsV2 => {
+	if (!isObject(query)) {
+		throw new BadRequestError("Invalid parameter: query must be an object");
+	}
+	const page = toNumber(query.page) ?? 1;
+	const isVictory = query.isVictory === "1";
+	return { page: Math.max(page, 1), isVictory };
 };
 
 export const toPostRecordParams = (body: unknown): PostRecordRequest => {

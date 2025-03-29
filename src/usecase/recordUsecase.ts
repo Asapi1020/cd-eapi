@@ -3,10 +3,13 @@ import { createId as cuid } from "@paralleldrive/cuid2";
 import type { QueryResult } from "gamedig";
 import type {
 	CDInfo,
+	GetRecordsParamsV2,
 	MatchInfo,
+	MatchRecord,
 	PostRecordRequest,
 	Record,
 	SteamUser,
+	UserRecord,
 	UserStats,
 	getRecordsParams,
 } from "../domain";
@@ -26,6 +29,12 @@ export class RecordUsecase {
 		params: getRecordsParams,
 	): Promise<[Record[], number]> {
 		return await this.db.getRecords(params);
+	}
+
+	public async getRecordsV2(
+		params: GetRecordsParamsV2,
+	): Promise<[MatchRecord[], UserRecord[], number]> {
+		return await this.db.getRecordsV2(params);
 	}
 
 	public async getRecordByID(id: string): Promise<Record | null> {

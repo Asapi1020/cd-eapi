@@ -11,3 +11,8 @@ export interface getRecordsParams {
 	steamID?: string;
 	isAll: boolean;
 }
+
+export interface GetRecordsParamsV2 {
+	page: number;
+	isVictory: boolean;
+}
