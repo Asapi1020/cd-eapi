@@ -41,6 +41,12 @@ export class RecordUsecase {
 		return await this.db.getRecord(id);
 	}
 
+	public async getRecordByIDV2(
+		recordID: string,
+	): Promise<[MatchRecord, UserRecord[]] | undefined> {
+		return await this.db.getRecordV2(recordID);
+	}
+
 	public async postRecord(request: PostRecordRequest): Promise<void> {
 		const serverName = await this.fetchServerName(
 			request.matchInfo.serverIP,

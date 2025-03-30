@@ -28,6 +28,19 @@ export class MongoDB {
 		return await this.collection.record.findOne({ id });
 	}
 
+	public async getRecordV2(
+		recordID: string,
+	): Promise<[MatchRecord, UserRecord[]] | undefined> {
+		const matchRecord = await this.collection.matchRecord.findOne({ recordID });
+		if (!matchRecord) {
+			return;
+		}
+		const userRecords = await this.collection.userRecord
+			.find({ recordID: matchRecord.recordID })
+			.toArray();
+		return [matchRecord, userRecords];
+	}
+
 	public async getRecords(
 		params: getRecordsParams,
 	): Promise<[Record[], number]> {
