@@ -3,7 +3,7 @@ import { createId as cuid } from "@paralleldrive/cuid2";
 import type { QueryResult } from "gamedig";
 import type {
 	CDInfo,
-	GetRecordsParamsV2,
+	GetMatchRecordsParams,
 	MatchInfo,
 	MatchRecord,
 	PostRecordRequest,
@@ -32,9 +32,13 @@ export class RecordUsecase {
 	}
 
 	public async getRecordsV2(
-		params: GetRecordsParamsV2,
+		params: GetMatchRecordsParams,
 	): Promise<[MatchRecord[], UserRecord[], number]> {
-		return await this.db.getRecordsV2(params);
+		const [matchRecords, total] = await this.db.getMatchRecords(params);
+		const userRecords = await this.db.getUserRecordsByRecordIDs(
+			matchRecords.map((record) => record.recordID),
+		);
+		return [matchRecords, userRecords, total];
 	}
 
 	public async getRecordByID(id: string): Promise<Record | null> {
@@ -44,7 +48,31 @@ export class RecordUsecase {
 	public async getRecordByIDV2(
 		recordID: string,
 	): Promise<[MatchRecord, UserRecord[]] | undefined> {
-		return await this.db.getRecordV2(recordID);
+		const matchRecord = await this.db.getMatchRecordByID(recordID);
+		const userRecords = await this.db.getUserRecordsByRecordIDs([recordID]);
+		if (!matchRecord) {
+			return;
+		}
+		return [matchRecord, userRecords];
+	}
+
+	public async getUsersRecords(
+		param: GetMatchRecordsParams,
+		steamID: string,
+	): Promise<[MatchRecord[], UserRecord[], number]> {
+		const [matchRecords, total] = await this.db.getUsersMatchRecordsBySteamID(
+			param,
+			steamID,
+		);
+		const userRecords = await this.db.getUserRecordsByRecordIDs(
+			matchRecords.map((record) => record.recordID),
+		);
+		return [matchRecords, userRecords, total];
+	}
+
+	public async getUserStats(steamID: string): Promise<UserRecord[]> {
+		const userRecords = await this.db.getUserRecordsBySteamID(steamID);
+		return userRecords;
 	}
 
 	public async postRecord(request: PostRecordRequest): Promise<void> {

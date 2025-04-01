@@ -8,7 +8,7 @@ import {
 import {
 	BadRequestError,
 	type CDInfo,
-	type GetRecordsParamsV2,
+	type GetMatchRecordsParams,
 	type MatchInfo,
 	type PostRecordRequest,
 	type UserStats,
@@ -30,7 +30,9 @@ export const toGetRecordsParams = (query: unknown): getRecordsParams => {
 	return { page: Math.max(page, 1), isVictory, steamID, isAll };
 };
 
-export const toGetRecordsParamsV2 = (query: unknown): GetRecordsParamsV2 => {
+export const toGetMatchRecordsParams = (
+	query: unknown,
+): GetMatchRecordsParams => {
 	if (!isObject(query)) {
 		throw new BadRequestError("Invalid parameter: query must be an object");
 	}

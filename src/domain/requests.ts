@@ -12,7 +12,7 @@ export interface getRecordsParams {
 	isAll: boolean;
 }
 
-export interface GetRecordsParamsV2 {
+export interface GetMatchRecordsParams {
 	page: number;
 	isVictory: boolean;
 }

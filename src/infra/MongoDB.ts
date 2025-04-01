@@ -1,6 +1,7 @@
 import type { Collection, Db, Filter, MongoClient } from "mongodb";
-import type { GetRecordsParamsV2, getRecordsParams } from "../domain";
+import type { GetMatchRecordsParams, getRecordsParams } from "../domain";
 import type { MatchRecord, Record, UserRecord } from "../domain/model";
+import { toMatchRecordsFromRaw } from "../interface-adapters/record";
 
 export const VERSION = "2.0.0";
 const PER_PAGE = 20;
@@ -28,19 +29,6 @@ export class MongoDB {
 		return await this.collection.record.findOne({ id });
 	}
 
-	public async getRecordV2(
-		recordID: string,
-	): Promise<[MatchRecord, UserRecord[]] | undefined> {
-		const matchRecord = await this.collection.matchRecord.findOne({ recordID });
-		if (!matchRecord) {
-			return;
-		}
-		const userRecords = await this.collection.userRecord
-			.find({ recordID: matchRecord.recordID })
-			.toArray();
-		return [matchRecord, userRecords];
-	}
-
 	public async getRecords(
 		params: getRecordsParams,
 	): Promise<[Record[], number]> {
@@ -66,9 +54,23 @@ export class MongoDB {
 		return [records, total];
 	}
 
-	public async getRecordsV2(
-		params: GetRecordsParamsV2,
-	): Promise<[MatchRecord[], UserRecord[], number]> {
+	public async getMatchRecordByID(recordID: string): Promise<MatchRecord> {
+		return await this.collection.matchRecord.findOne({ recordID });
+	}
+
+	public async getMatchRecordsByID(
+		recordIDs: string[],
+	): Promise<MatchRecord[]> {
+		return await this.collection.matchRecord
+			.find({
+				recordID: { $in: recordIDs },
+			})
+			.toArray();
+	}
+
+	public async getMatchRecords(
+		params: GetMatchRecordsParams,
+	): Promise<[MatchRecord[], number]> {
 		const skip = (params.page - 1) * PER_PAGE;
 		const filter: Filter<MatchRecord> = params.isVictory
 			? { isVictory: true }
@@ -80,13 +82,7 @@ export class MongoDB {
 			.sort({ timeStamp: -1 });
 		const matchRecords = await query.skip(skip).limit(PER_PAGE).toArray();
 
-		const userStats = await this.collection.userRecord
-			.find({
-				recordID: { $in: matchRecords.map((record) => record.recordID) },
-			})
-			.toArray();
-
-		return [matchRecords, userStats, total];
+		return [matchRecords, total];
 	}
 
 	public async postRecord(record: Record): Promise<void> {
@@ -96,6 +92,63 @@ export class MongoDB {
 
 	public async postMatchRecord(matchRecord: MatchRecord): Promise<void> {
 		await this.collection.matchRecord.insertOne(matchRecord);
+	}
+
+	public async getUserRecordsByRecordIDs(
+		recordIDs: string[],
+	): Promise<UserRecord[]> {
+		const userRecords = await this.collection.userRecord
+			.find({ recordID: { $in: recordIDs } })
+			.toArray();
+		return userRecords;
+	}
+
+	public async getUserRecordsBySteamID(steamID: string): Promise<UserRecord[]> {
+		const userRecords = await this.collection.userRecord
+			.find({ steamID })
+			.toArray();
+		return userRecords;
+	}
+
+	public async getUsersMatchRecordsBySteamID(
+		param: GetMatchRecordsParams,
+		steamID: string,
+	): Promise<[MatchRecord[], number]> {
+		const victoryFilter =
+			param.isVictory !== undefined
+				? [{ $match: { "matchData.isVictory": true } }]
+				: [];
+		const pipeline = [
+			{
+				$match: {
+					steamID,
+				},
+			},
+			{
+				$lookup: {
+					from: "matchRecord",
+					localField: "recordID",
+					foreignField: "recordID",
+					as: "matchData",
+				},
+			},
+			{ $unwind: "$matchData" },
+			...victoryFilter,
+		];
+		const rawTotal = await this.collection.userRecord
+			.aggregate([...pipeline, { $count: "totalCount" }])
+			.toArray();
+		const total = rawTotal.length > 0 ? rawTotal[0].totalCount : 0;
+		const rawData = await this.collection.userRecord
+			.aggregate([
+				...pipeline,
+				{ $sort: { "matchData.timeStamp": -1 } },
+				{ $skip: (param.page - 1) * PER_PAGE },
+				{ $limit: PER_PAGE },
+			])
+			.toArray();
+
+		return [toMatchRecordsFromRaw(rawData), total];
 	}
 
 	public async postUserRecords(userRecords: UserRecord[]): Promise<void> {
