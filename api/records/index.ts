@@ -2,10 +2,7 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { BadRequestError } from "../../src/domain";
 import { Client } from "../../src/framework";
 import { MongoDB } from "../../src/infra";
-import {
-	toGetRecordsParams,
-	toPostRecordParams,
-} from "../../src/interface-adapters/record";
+import { toGetRecordsParams, toPostRecordParams } from "../../src/interface-adapters/record";
 import { RecordUsecase } from "../../src/usecase";
 import { notifyError } from "../../src/usecase/ErrorHandler";
 
@@ -24,10 +21,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 	return res.status(405).json({ message: "Method Not Allowed" });
 }
 
-const getRecords = async (
-	req: VercelRequest,
-	res: VercelResponse,
-): Promise<VercelResponse> => {
+const getRecords = async (req: VercelRequest, res: VercelResponse): Promise<VercelResponse> => {
 	try {
 		const params = toGetRecordsParams(req.query);
 		const client = await Client.mongo();
@@ -40,10 +34,7 @@ const getRecords = async (
 	}
 };
 
-const postRecords = async (
-	req: VercelRequest,
-	res: VercelResponse,
-): Promise<VercelResponse> => {
+const postRecords = async (req: VercelRequest, res: VercelResponse): Promise<VercelResponse> => {
 	try {
 		const client = await Client.mongo();
 		const usecase = new RecordUsecase(new MongoDB(client));

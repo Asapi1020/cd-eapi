@@ -13,16 +13,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 	return res.status(405).json({ message: "Method Not Allowed" });
 }
 
-const getRecords = async (
-	req: VercelRequest,
-	res: VercelResponse,
-): Promise<VercelResponse> => {
+const getRecords = async (req: VercelRequest, res: VercelResponse): Promise<VercelResponse> => {
 	try {
 		const params = toGetMatchRecordsParams(req.query);
 		const client = await Client.mongo();
 		const usecase = new RecordUsecase(new MongoDB(client));
-		const [matchRecords, userRecords, total] =
-			await usecase.getRecordsV2(params);
+		const [matchRecords, userRecords, total] = await usecase.getRecordsV2(params);
 		const records = toRecordsForFrontend(matchRecords, userRecords);
 		return res.status(200).json({ records, total });
 	} catch (error) {

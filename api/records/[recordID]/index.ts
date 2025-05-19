@@ -1,9 +1,6 @@
 import { toString as convertToString } from "@asp1020/type-utils";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import {
-	BadRequestError,
-	throwInvalidParamerterError,
-} from "../../../src/domain";
+import { BadRequestError, throwInvalidParameterError } from "../../../src/domain";
 import { Client } from "../../../src/framework";
 import { MongoDB } from "../../../src/infra";
 import { RecordUsecase } from "../../../src/usecase";
@@ -15,14 +12,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 	return res.status(405).json({ message: "Method Not Allowed" });
 }
 
-const getRecord = async (
-	req: VercelRequest,
-	res: VercelResponse,
-): Promise<VercelResponse> => {
+const getRecord = async (req: VercelRequest, res: VercelResponse): Promise<VercelResponse> => {
 	try {
-		const recordID =
-			convertToString(req.query.recordID) ??
-			throwInvalidParamerterError("recordID");
+		const recordID = convertToString(req.query.recordID) ?? throwInvalidParameterError("recordID");
 
 		const client = await Client.mongo();
 		const usecase = new RecordUsecase(new MongoDB(client));

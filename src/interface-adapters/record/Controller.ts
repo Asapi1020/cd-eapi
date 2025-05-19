@@ -1,10 +1,4 @@
-import {
-	toString as convertToString,
-	isArray,
-	isObject,
-	toBoolean,
-	toNumber,
-} from "@asp1020/type-utils";
+import { toString as convertToString, isArray, isObject, toBoolean, toNumber } from "@asp1020/type-utils";
 import {
 	BadRequestError,
 	type CDInfo,
@@ -15,7 +9,7 @@ import {
 	type WeaponDamage,
 	type ZedKillType,
 	type getRecordsParams,
-	throwInvalidParamerterError,
+	throwInvalidParameterError,
 } from "../../domain";
 
 export const toGetRecordsParams = (query: unknown): getRecordsParams => {
@@ -30,9 +24,7 @@ export const toGetRecordsParams = (query: unknown): getRecordsParams => {
 	return { page: Math.max(page, 1), isVictory, steamID, isAll };
 };
 
-export const toGetMatchRecordsParams = (
-	query: unknown,
-): GetMatchRecordsParams => {
+export const toGetMatchRecordsParams = (query: unknown): GetMatchRecordsParams => {
 	if (!isObject(query)) {
 		throw new BadRequestError("Invalid parameter: query must be an object");
 	}
@@ -61,22 +53,16 @@ export const toMatchInfo = (data: unknown): Omit<MatchInfo, "timeStamp"> => {
 		throw new BadRequestError("Invalid parameter: data must be an object");
 	}
 	return {
-		mapName:
-			convertToString(data.mapName) ?? throwInvalidParamerterError("mapName"),
+		mapName: convertToString(data.mapName) ?? throwInvalidParameterError("mapName"),
 		serverName: convertToString(data.serverName),
-		serverIP:
-			convertToString(data.serverIP) ?? throwInvalidParamerterError("serverIP"),
-		isVictory:
-			toBoolean(data.isVictory) ?? throwInvalidParamerterError("isVictory"),
-		defeatWave:
-			toNumber(data.defeatWave) ?? throwInvalidParamerterError("defeatWave"),
+		serverIP: convertToString(data.serverIP) ?? throwInvalidParameterError("serverIP"),
+		isVictory: toBoolean(data.isVictory) ?? throwInvalidParameterError("isVictory"),
+		defeatWave: toNumber(data.defeatWave) ?? throwInvalidParameterError("defeatWave"),
 		cheatMessages: isArray(data.cheatMessages)
 			? data.cheatMessages.map((message: unknown) => convertToString(message))
 			: [],
-		mutators: isArray(data.mutators)
-			? data.mutators.map((mutator: unknown) => convertToString(mutator))
-			: [],
-		isSolo: toBoolean(data.isSolo) ?? throwInvalidParamerterError("isSolo"),
+		mutators: isArray(data.mutators) ? data.mutators.map((mutator: unknown) => convertToString(mutator)) : [],
+		isSolo: toBoolean(data.isSolo) ?? throwInvalidParameterError("isSolo"),
 		CDInfo: toCDInfo(data.CDInfo),
 	};
 };
@@ -86,65 +72,28 @@ export const toCDInfo = (data: unknown): CDInfo => {
 		throw new BadRequestError("Invalid parameter: data must be an object");
 	}
 	return {
-		spawnCycle:
-			convertToString(data.spawnCycle) ??
-			throwInvalidParamerterError("spawnCycle"),
-		maxMonsters:
-			toNumber(data.maxMonsters) ?? throwInvalidParamerterError("maxMonsters"),
-		cohortSize:
-			toNumber(data.cohortSize) ?? throwInvalidParamerterError("cohortSize"),
-		spawnPoll:
-			toNumber(data.spawnPoll) ?? throwInvalidParamerterError("spawnPoll"),
-		waveSizeFakes:
-			toNumber(data.waveSizeFakes) ??
-			throwInvalidParamerterError("waveSizeFakes"),
-		spawnMod:
-			toNumber(data.spawnMod) ?? throwInvalidParamerterError("spawnMod"),
-		trashHPFakes:
-			toNumber(data.trashHPFakes) ??
-			throwInvalidParamerterError("trashHPFakes"),
-		QPHPFakes:
-			toNumber(data.QPHPFakes) ?? throwInvalidParamerterError("QPHPFakes"),
-		FPHPFakes:
-			toNumber(data.FPHPFakes) ?? throwInvalidParamerterError("FPHPFakes"),
-		SCHPFakes:
-			toNumber(data.SCHPFakes) ?? throwInvalidParamerterError("SCHPFakes"),
-		ZTSpawnMode:
-			convertToString(data.ZTSpawnMode) ??
-			throwInvalidParamerterError("ZTSpawnMode"),
-		ZTSpawnSlowDown:
-			toNumber(data.ZTSpawnSlowDown) ??
-			throwInvalidParamerterError("ZTSpawnSlowDown"),
-		albinoAlphas:
-			toBoolean(data.albinoAlphas) ??
-			throwInvalidParamerterError("albinoAlphas"),
-		albinoCrawlers:
-			toBoolean(data.albinoCrawlers) ??
-			throwInvalidParamerterError("albinoCrawlers"),
-		albinoGorefasts:
-			toBoolean(data.albinoGorefasts) ??
-			throwInvalidParamerterError("albinoGorefasts"),
-		disableRobots:
-			toBoolean(data.disableRobots) ??
-			throwInvalidParamerterError("disableRobots"),
-		disableSpawners:
-			toBoolean(data.disableSpawners) ??
-			throwInvalidParamerterError("disableSpawners"),
-		fleshpoundRageSpawns:
-			toBoolean(data.fleshpoundRageSpawns) ??
-			throwInvalidParamerterError("fleshpoundRageSpawns"),
-		startWithFullAmmo:
-			toBoolean(data.startWithFullAmmo) ??
-			throwInvalidParamerterError("startWithFullAmmo"),
-		startWithFullArmor:
-			toBoolean(data.startWithFullArmor) ??
-			throwInvalidParamerterError("startWithFullArmor"),
-		startWithFullGrenade:
-			toBoolean(data.startWithFullGrenade) ??
-			throwInvalidParamerterError("startWithFullGrenade"),
-		zedsTeleportCloser:
-			toBoolean(data.zedsTeleportCloser) ??
-			throwInvalidParamerterError("zedsTeleportCloser"),
+		spawnCycle: convertToString(data.spawnCycle) ?? throwInvalidParameterError("spawnCycle"),
+		maxMonsters: toNumber(data.maxMonsters) ?? throwInvalidParameterError("maxMonsters"),
+		cohortSize: toNumber(data.cohortSize) ?? throwInvalidParameterError("cohortSize"),
+		spawnPoll: toNumber(data.spawnPoll) ?? throwInvalidParameterError("spawnPoll"),
+		waveSizeFakes: toNumber(data.waveSizeFakes) ?? throwInvalidParameterError("waveSizeFakes"),
+		spawnMod: toNumber(data.spawnMod) ?? throwInvalidParameterError("spawnMod"),
+		trashHPFakes: toNumber(data.trashHPFakes) ?? throwInvalidParameterError("trashHPFakes"),
+		QPHPFakes: toNumber(data.QPHPFakes) ?? throwInvalidParameterError("QPHPFakes"),
+		FPHPFakes: toNumber(data.FPHPFakes) ?? throwInvalidParameterError("FPHPFakes"),
+		SCHPFakes: toNumber(data.SCHPFakes) ?? throwInvalidParameterError("SCHPFakes"),
+		ZTSpawnMode: convertToString(data.ZTSpawnMode) ?? throwInvalidParameterError("ZTSpawnMode"),
+		ZTSpawnSlowDown: toNumber(data.ZTSpawnSlowDown) ?? throwInvalidParameterError("ZTSpawnSlowDown"),
+		albinoAlphas: toBoolean(data.albinoAlphas) ?? throwInvalidParameterError("albinoAlphas"),
+		albinoCrawlers: toBoolean(data.albinoCrawlers) ?? throwInvalidParameterError("albinoCrawlers"),
+		albinoGorefasts: toBoolean(data.albinoGorefasts) ?? throwInvalidParameterError("albinoGorefasts"),
+		disableRobots: toBoolean(data.disableRobots) ?? throwInvalidParameterError("disableRobots"),
+		disableSpawners: toBoolean(data.disableSpawners) ?? throwInvalidParameterError("disableSpawners"),
+		fleshpoundRageSpawns: toBoolean(data.fleshpoundRageSpawns) ?? throwInvalidParameterError("fleshpoundRageSpawns"),
+		startWithFullAmmo: toBoolean(data.startWithFullAmmo) ?? throwInvalidParameterError("startWithFullAmmo"),
+		startWithFullArmor: toBoolean(data.startWithFullArmor) ?? throwInvalidParameterError("startWithFullArmor"),
+		startWithFullGrenade: toBoolean(data.startWithFullGrenade) ?? throwInvalidParameterError("startWithFullGrenade"),
+		zedsTeleportCloser: toBoolean(data.zedsTeleportCloser) ?? throwInvalidParameterError("zedsTeleportCloser"),
 	};
 };
 
@@ -154,34 +103,19 @@ export const toUserStats = (data: unknown): UserStats => {
 	}
 	return {
 		playerName: convertToString(data.playerName),
-		steamID:
-			convertToString(data.steamID) ?? throwInvalidParamerterError("steamID"),
-		perkClass:
-			convertToString(data.perkClass) ??
-			throwInvalidParamerterError("perkClass"),
-		playTime:
-			toNumber(data.playTime) ?? throwInvalidParamerterError("playTime"),
-		damageDealt:
-			toNumber(data.damageDealt) ?? throwInvalidParamerterError("damageDealt"),
-		damageTaken:
-			toNumber(data.damageTaken) ?? throwInvalidParamerterError("damageTaken"),
-		healsGiven:
-			toNumber(data.healsGiven) ?? throwInvalidParamerterError("healsGiven"),
-		healsReceived:
-			toNumber(data.healsReceived) ??
-			throwInvalidParamerterError("healsReceived"),
-		doshEarned:
-			toNumber(data.doshEarned) ?? throwInvalidParamerterError("doshEarned"),
-		shotsFired:
-			toNumber(data.shotsFired) ?? throwInvalidParamerterError("shotsFired"),
-		shotsHit:
-			toNumber(data.shotsHit) ?? throwInvalidParamerterError("shotsHit"),
-		headShots:
-			toNumber(data.headShots) ?? throwInvalidParamerterError("headShots"),
-		deaths: toNumber(data.deaths) ?? throwInvalidParamerterError("deaths"),
-		weaponDamages: isArray(data.weaponDamages)
-			? data.weaponDamages.map(toWeaponDamage)
-			: [],
+		steamID: convertToString(data.steamID) ?? throwInvalidParameterError("steamID"),
+		perkClass: convertToString(data.perkClass) ?? throwInvalidParameterError("perkClass"),
+		playTime: toNumber(data.playTime) ?? throwInvalidParameterError("playTime"),
+		damageDealt: toNumber(data.damageDealt) ?? throwInvalidParameterError("damageDealt"),
+		damageTaken: toNumber(data.damageTaken) ?? throwInvalidParameterError("damageTaken"),
+		healsGiven: toNumber(data.healsGiven) ?? throwInvalidParameterError("healsGiven"),
+		healsReceived: toNumber(data.healsReceived) ?? throwInvalidParameterError("healsReceived"),
+		doshEarned: toNumber(data.doshEarned) ?? throwInvalidParameterError("doshEarned"),
+		shotsFired: toNumber(data.shotsFired) ?? throwInvalidParameterError("shotsFired"),
+		shotsHit: toNumber(data.shotsHit) ?? throwInvalidParameterError("shotsHit"),
+		headShots: toNumber(data.headShots) ?? throwInvalidParameterError("headShots"),
+		deaths: toNumber(data.deaths) ?? throwInvalidParameterError("deaths"),
+		weaponDamages: isArray(data.weaponDamages) ? data.weaponDamages.map(toWeaponDamage) : [],
 		zedKills: isArray(data.zedKills) ? data.zedKills.map(toZedKillType) : [],
 	};
 };
@@ -191,17 +125,10 @@ export const toWeaponDamage = (data: unknown): WeaponDamage => {
 		throw new BadRequestError("Invalid parameter: data must be an object");
 	}
 	return {
-		weaponDefClass:
-			convertToString(data.weaponDefClass) ??
-			throwInvalidParamerterError("weaponDefClass"),
-		damageAmount:
-			toNumber(data.damageAmount) ??
-			throwInvalidParamerterError("damageAmount"),
-		headShots:
-			toNumber(data.headShots) ?? throwInvalidParamerterError("headShots"),
-		largeZedKills:
-			toNumber(data.largeZedKills) ??
-			throwInvalidParamerterError("largeZedKills"),
+		weaponDefClass: convertToString(data.weaponDefClass) ?? throwInvalidParameterError("weaponDefClass"),
+		damageAmount: toNumber(data.damageAmount) ?? throwInvalidParameterError("damageAmount"),
+		headShots: toNumber(data.headShots) ?? throwInvalidParameterError("headShots"),
+		largeZedKills: toNumber(data.largeZedKills) ?? throwInvalidParameterError("largeZedKills"),
 	};
 };
 
@@ -210,9 +137,7 @@ export const toZedKillType = (data: unknown): ZedKillType => {
 		throw new BadRequestError("Invalid parameter: data must be an object");
 	}
 	return {
-		zedClass:
-			convertToString(data.zedClass) ?? throwInvalidParamerterError("zedClass"),
-		killCount:
-			toNumber(data.killCount) ?? throwInvalidParamerterError("killCount"),
+		zedClass: convertToString(data.zedClass) ?? throwInvalidParameterError("zedClass"),
+		killCount: toNumber(data.killCount) ?? throwInvalidParameterError("killCount"),
 	};
 };

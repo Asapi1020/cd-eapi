@@ -1,6 +1,6 @@
 import { isArray, isString } from "@asp1020/type-utils";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { BadRequestError, throwInvalidParamerterError } from "../../src/domain";
+import { BadRequestError, throwInvalidParameterError } from "../../src/domain";
 import { SteamAPIClient } from "../../src/framework";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -14,11 +14,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 const getPlayers = async (req: VercelRequest, res: VercelResponse) => {
 	try {
 		const { id } = req.query;
-		const ids = isString(id)
-			? [id]
-			: isArray(id)
-				? id
-				: throwInvalidParamerterError("id");
+		const ids = isString(id) ? [id] : isArray(id) ? id : throwInvalidParameterError("id");
 
 		const steamAPIClient = new SteamAPIClient();
 		const data = await steamAPIClient.getPlayerSummaries(ids);
