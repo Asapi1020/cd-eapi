@@ -11,13 +11,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 	return res.status(405).json({ message: "Method Not Allowed" });
 }
 
-const getServer = async (
-	req: VercelRequest,
-	res: VercelResponse,
-): Promise<VercelResponse> => {
+const getServer = async (req: VercelRequest, res: VercelResponse): Promise<VercelResponse> => {
 	try {
-		const ip =
-			convertToString(req.query.ip) ?? throwInvalidParamerterError("server ip");
+		const ip = convertToString(req.query.ip) ?? throwInvalidParamerterError("server ip");
 		const steamAPIClient = new SteamAPIClient();
 		const serverInfo = await steamAPIClient.getServerInfo(ip);
 		return res.status(200).json({ serverInfo });

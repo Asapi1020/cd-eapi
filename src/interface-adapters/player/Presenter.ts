@@ -1,16 +1,8 @@
-import {
-	toString as convertToString,
-	isArray,
-	isObject,
-} from "@asp1020/type-utils";
+import { toString as convertToString, isArray, isObject } from "@asp1020/type-utils";
 import type { SteamUser } from "../../domain";
 
 export const toSteamUser = (data: unknown): SteamUser[] | undefined => {
-	if (
-		!isObject(data) ||
-		!isObject(data.response) ||
-		!isArray(data.response.players)
-	) {
+	if (!isObject(data) || !isObject(data.response) || !isArray(data.response.players)) {
 		return undefined;
 	}
 

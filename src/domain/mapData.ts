@@ -52,10 +52,7 @@ export const mapData: { [key: string]: [string, string] } = {
 		"Zed Landing",
 		"https://wiki.killingfloor2.com/images/thumb/d/d3/KF2_Map_Zed_Landing.png/256px-KF2_Map_Zed_Landing.png",
 	],
-	"kf-nuked": [
-		"Nuked",
-		"https://wiki.killingfloor2.com/images/thumb/a/ab/KF2_Map_Nuked.png/256px-KF2_Map_Nuked.png",
-	],
+	"kf-nuked": ["Nuked", "https://wiki.killingfloor2.com/images/thumb/a/ab/KF2_Map_Nuked.png/256px-KF2_Map_Nuked.png"],
 	"kf-thedescent": [
 		"The Descent",
 		"https://wiki.killingfloor2.com/images/thumb/6/64/KF2_Map_TheDescent.png/256px-KF2_Map_TheDescent.png",
@@ -173,10 +170,7 @@ export const mapData: { [key: string]: [string, string] } = {
 		"Biotics Corridor",
 		"https://steamuserimages-a.akamaihd.net/ugc/1754686811584369169/DBA29FFBCEF8C5285669EB14036B1896C77BC769/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false",
 	],
-	"kf-redhooddinner_v135": [
-		"Redhood Dinner",
-		"https://i.imgur.com/whQapIm.png",
-	],
+	"kf-redhooddinner_v135": ["Redhood Dinner", "https://i.imgur.com/whQapIm.png"],
 	"kf-subsnowy": ["Sub Snowy", "https://i.imgur.com/EtsprtZ.png"],
 	"kf-subsynth": ["Sub Synth", "https://i.imgur.com/7L7yivm.png"],
 	"kf-area52": [
@@ -209,10 +203,7 @@ export const mapData: { [key: string]: [string, string] } = {
 		"https://steamuserimages-a.akamaihd.net/ugc/929305210773148194/EDBEA3A259E4A60D4000192C38015482AB2380A2/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false",
 	],
 	"kf-synthwavething": ["Synthwave Thing", "https://i.imgur.com/6n8kyDd.png"],
-	"kf-burningparis_aspedit": [
-		"Burning Paris (Asp Edit)",
-		"https://i.imgur.com/6mXwUBI.png",
-	],
+	"kf-burningparis_aspedit": ["Burning Paris (Asp Edit)", "https://i.imgur.com/6mXwUBI.png"],
 	"kf-desolationoriginal": [
 		"Desolation (Original)",
 		"https://steamuserimages-a.akamaihd.net/ugc/959718984753305085/A0F9CAF8E89128DFE6BF153701F41FCEF9EA321E/?imw=637&imh=358&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true",

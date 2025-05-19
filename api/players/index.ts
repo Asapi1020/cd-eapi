@@ -14,11 +14,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 const getPlayers = async (req: VercelRequest, res: VercelResponse) => {
 	try {
 		const { id } = req.query;
-		const ids = isString(id)
-			? [id]
-			: isArray(id)
-				? id
-				: throwInvalidParamerterError("id");
+		const ids = isString(id) ? [id] : isArray(id) ? id : throwInvalidParamerterError("id");
 
 		const steamAPIClient = new SteamAPIClient();
 		const data = await steamAPIClient.getPlayerSummaries(ids);

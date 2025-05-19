@@ -1,10 +1,5 @@
-export const throwInvalidParamerterError = (
-	param: string,
-	message?: string,
-): never => {
-	throw new BadRequestError(
-		`Invalid parameter: ${param}${message ? ` (${message})` : ""}`,
-	);
+export const throwInvalidParamerterError = (param: string, message?: string): never => {
+	throw new BadRequestError(`Invalid parameter: ${param}${message ? ` (${message})` : ""}`);
 };
 
 export const throwInternalServerError = (message: string): never => {

@@ -35,9 +35,6 @@ export class SteamAPIClient {
 		}
 
 		const data = await response.json();
-		return (
-			toSteamUser(data) ??
-			throwInternalServerError("Failed to parse player data")
-		);
+		return toSteamUser(data) ?? throwInternalServerError("Failed to parse player data");
 	}
 }

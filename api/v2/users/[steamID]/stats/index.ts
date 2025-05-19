@@ -1,13 +1,9 @@
-import { toString as convertToString, toNumber } from "@asp1020/type-utils";
+import { toString as convertToString } from "@asp1020/type-utils";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { throwInvalidParamerterError } from "../../../../../src/domain";
 import { Client } from "../../../../../src/framework";
 import { MongoDB } from "../../../../../src/infra";
-import {
-	toGetMatchRecordsParams,
-	toRecordsForFrontend,
-	toUserStats,
-} from "../../../../../src/interface-adapters/record";
+import { toUserStats } from "../../../../../src/interface-adapters/record";
 import { RecordUsecase } from "../../../../../src/usecase";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -18,14 +14,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 	return res.status(405).json({ message: "Method Not Allowed" });
 }
 
-const getStats = async (
-	req: VercelRequest,
-	res: VercelResponse,
-): Promise<VercelResponse> => {
+const getStats = async (req: VercelRequest, res: VercelResponse): Promise<VercelResponse> => {
 	try {
-		const steamID =
-			convertToString(req.query.steamID) ??
-			throwInvalidParamerterError("steamID");
+		const steamID = convertToString(req.query.steamID) ?? throwInvalidParamerterError("steamID");
 		const client = await Client.mongo();
 		const usecase = new RecordUsecase(new MongoDB(client));
 		const userRecords = await usecase.getUserStats(steamID);
