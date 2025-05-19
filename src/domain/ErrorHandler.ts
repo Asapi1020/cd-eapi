@@ -1,4 +1,4 @@
-export const throwInvalidParamerterError = (param: string, message?: string): never => {
+export const throwInvalidParameterError = (param: string, message?: string): never => {
 	throw new BadRequestError(`Invalid parameter: ${param}${message ? ` (${message})` : ""}`);
 };
 

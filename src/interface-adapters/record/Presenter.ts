@@ -6,7 +6,7 @@ import {
 	type UserRecord,
 	type UserStats,
 	throwInternalServerError,
-	throwInvalidParamerterError,
+	throwInvalidParameterError,
 } from "../../domain";
 
 export const toRecordsForFrontend = (matchRecords: MatchRecord[], userRecords: UserRecord[]): Record[] => {
@@ -74,7 +74,7 @@ export const toUserStatsForFrontend = (userRecord: UserRecord): UserStats => {
 
 export const toMatchRecordsFromRaw = (raw: unknown): MatchRecord[] => {
 	if (!isArray(raw) || !raw.every(isObject)) {
-		return throwInvalidParamerterError("data is not an array of object");
+		return throwInvalidParameterError("data is not an array of object");
 	}
 
 	return raw.map((data) => {
