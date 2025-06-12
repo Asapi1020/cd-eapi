@@ -32,8 +32,7 @@ export class SteamAPIClient {
 		);
 
 		if (!response.ok) {
-			const errorText = await response.text().catch(() => "Failed to read response body");
-			throw new Error(`Failed to fetch player summaries - ${response.statusText} (${response.status}): ${errorText}`);
+			throw new Error(`Failed to fetch player summaries - ${response.statusText} (${response.status})`);
 		}
 
 		const data = await response.json();

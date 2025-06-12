@@ -18,7 +18,7 @@ const getPlayers = async (req: VercelRequest, res: VercelResponse) => {
 		const { id } = req.query;
 		const ids = isString(id) ? [id] : isArray(id) ? id : throwInvalidParameterError("id");
 
-		const data = await context.infra.steamAPIClient.getPlayerSummaries(ids);
+		const data = await context.usecases.recordUsecase.getPlayerSummaries(ids);
 
 		return res.status(200).json(data);
 	} catch (error) {

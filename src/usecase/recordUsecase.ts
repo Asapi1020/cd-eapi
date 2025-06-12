@@ -128,6 +128,20 @@ export class RecordUsecase {
 		}
 	}
 
+	public async getPlayerSummaries(steam64IDs: string[]): Promise<SteamUser[]> {
+		const steamUsersCache = await this.db.getSteamUsersCache(steam64IDs);
+
+		if (steamUsersCache.length === steam64IDs.length) {
+			return steamUsersCache;
+		}
+
+		const steamUsers = await this.steamAPIClient.getPlayerSummaries(steam64IDs);
+
+		await this.db.cacheSteamUsers(steamUsers);
+
+		return steamUsers;
+	}
+
 	private async fetchServerName(serverIP: string): Promise<string | null> {
 		const serverInfo: QueryResult = await this.steamAPIClient.getServerInfo(serverIP.split(":")[0]).catch((error) => {
 			console.log("Server Info Error", error);
@@ -139,7 +153,7 @@ export class RecordUsecase {
 	private async getSteamUserMap(steam32IDs: string[]): Promise<Map<string, SteamUser>> {
 		const steamIDMap = new Map(steam32IDs.map((id) => [id, convertSteam32To64ID(id)]));
 		const steam64IDs = Array.from(steamIDMap.values());
-		const steamUsers = await this.steamAPIClient.getPlayerSummaries(steam64IDs);
+		const steamUsers = await this.getPlayerSummaries(steam64IDs);
 		const steamUserMap = new Map(
 			steam32IDs.map((steam32ID) => {
 				const steam64ID = steamIDMap.get(steam32ID);
