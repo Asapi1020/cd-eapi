@@ -6,10 +6,12 @@ export const throwInternalServerError = (message: string): never => {
 	throw new InternalServerError(`Internal Server Error${message}`);
 };
 
-export enum ErrorCode {
-	BAD_REQUEST_ERROR = "BAD_REQUEST_ERROR",
-	INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR",
-}
+export const ErrorCode = {
+	BAD_REQUEST_ERROR: "BAD_REQUEST_ERROR",
+	INTERNAL_SERVER_ERROR: "INTERNAL_SERVER_ERROR",
+} as const;
+
+export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
 
 export class BadRequestError extends Error {
 	constructor(message: string) {

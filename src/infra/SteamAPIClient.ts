@@ -1,16 +1,17 @@
 import { GameDig, type QueryResult } from "gamedig";
 import { type SteamUser, throwInternalServerError } from "../domain";
 import { toSteamUser } from "../interface-adapters/player";
+import type { Context } from "./Context";
 
 export class SteamAPIClient {
-	private key: string;
+	private context: Context;
 
-	constructor() {
-		if (!process.env.STEAM_API_KEY) {
-			throw new Error("Steam API key is undefined");
-		}
+	constructor(context: Context) {
+		this.context = context;
+	}
 
-		this.key = process.env.STEAM_API_KEY;
+	private get key(): string {
+		return this.context.domain.config.steamAPIKey;
 	}
 
 	public async getServerInfo(ip: string): Promise<QueryResult> {
@@ -31,8 +32,7 @@ export class SteamAPIClient {
 		);
 
 		if (!response.ok) {
-			const errorText = await response.text().catch(() => "Failed to read response body");
-			throw new Error(`Failed to fetch player summaries - ${response.statusText} (${response.status}): ${errorText}`);
+			throw new Error(`Failed to fetch player summaries - ${response.statusText} (${response.status})`);
 		}
 
 		const data = await response.json();
