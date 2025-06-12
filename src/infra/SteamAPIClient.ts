@@ -1,16 +1,17 @@
 import { GameDig, type QueryResult } from "gamedig";
 import { type SteamUser, throwInternalServerError } from "../domain";
 import { toSteamUser } from "../interface-adapters/player";
+import type { Context } from "./Context";
 
 export class SteamAPIClient {
-	private key: string;
+	private context: Context;
 
-	constructor() {
-		if (!process.env.STEAM_API_KEY) {
-			throw new Error("Steam API key is undefined");
-		}
+	constructor(context: Context) {
+		this.context = context;
+	}
 
-		this.key = process.env.STEAM_API_KEY;
+	private get key(): string {
+		return this.context.domain.config.steamAPIKey;
 	}
 
 	public async getServerInfo(ip: string): Promise<QueryResult> {

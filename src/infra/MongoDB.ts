@@ -1,7 +1,8 @@
-import type { Collection, Db, Filter, MongoClient } from "mongodb";
+import type { Collection, Db, Filter } from "mongodb";
 import type { GetMatchRecordsParams, getRecordsParams } from "../domain";
 import type { MatchRecord, Record, UserRecord } from "../domain/model";
 import { toMatchRecordsFromRaw } from "../interface-adapters/record";
+import type { Context } from "./Context";
 
 export const VERSION = "2.0.0";
 const PER_PAGE = 20;
@@ -16,8 +17,8 @@ export class MongoDB {
 	private db: Db;
 	private collection: Table;
 
-	public constructor(client: MongoClient) {
-		this.db = client.db(process.env.DB_NAME);
+	public constructor(context: Context) {
+		this.db = context.drivers.mongoClient.db(context.domain.config.dbName);
 		this.collection = {
 			record: this.db.collection("record"),
 			matchRecord: this.db.collection("matchRecord"),
