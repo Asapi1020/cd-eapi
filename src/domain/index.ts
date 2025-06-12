@@ -3,3 +3,4 @@ export * from "./model";
 export * from "./ErrorHandler";
 export * from "./perkData";
 export * from "./mapData";
+export * from "./Domain";
