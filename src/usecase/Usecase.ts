@@ -1,5 +1,5 @@
 import type { Context } from "./Context";
-import { RecordUsecase } from "./RecordUsecase";
+import { RecordUsecase } from "./TMPRecordUsecase";
 
 export class Usecase {
 	public recordUsecase: RecordUsecase;

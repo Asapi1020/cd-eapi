@@ -1,2 +1,2 @@
-export * from "./RecordUsecase";
+export * from "./TMPRecordUsecase";
 export * from "./Usecase";
