@@ -142,6 +142,10 @@ export class RecordUsecase {
 		return steamUsers;
 	}
 
+	public async getUsers(offset: number, limit: number): Promise<[{ steamID: string; count: number }[], number]> {
+		return await this.db.getUsersAndCount(offset, limit);
+	}
+
 	private async fetchServerName(serverIP: string): Promise<string | null> {
 		const serverInfo: QueryResult = await this.steamAPIClient.getServerInfo(serverIP.split(":")[0]).catch((error) => {
 			console.log("Server Info Error", error);

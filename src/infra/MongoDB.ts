@@ -167,4 +167,40 @@ export class MongoDB {
 			})),
 		);
 	}
+
+	public async getUsersAndCount(offset = 0, limit?: number): Promise<[{ steamID: string; count: number }[], number]> {
+		const basePipeline = [
+			{
+				$group: {
+					_id: "$steamID",
+					count: { $sum: 1 },
+				},
+			},
+			{
+				$sort: { count: -1 },
+			},
+			{
+				$project: {
+					_id: 0,
+					steamID: "$_id",
+					count: 1,
+				},
+			},
+		];
+
+		const countPipeline = [...basePipeline, { $count: "totalCount" }];
+
+		const totalResult = await this.collection.userRecord.aggregate(countPipeline).toArray();
+		const total = totalResult.length > 0 ? totalResult[0].totalCount : 0;
+
+		const skipStage = { $skip: offset };
+		const limitStage = limit !== undefined ? { $limit: limit } : null;
+
+		const dataPipeline = limitStage ? [...basePipeline, skipStage, limitStage] : [...basePipeline, skipStage];
+
+		const result = await this.collection.userRecord
+			.aggregate<{ steamID: string; count: number }>(dataPipeline)
+			.toArray();
+		return [result, total];
+	}
 }
